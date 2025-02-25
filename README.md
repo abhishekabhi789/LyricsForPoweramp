@@ -12,11 +12,11 @@ A lyrics plugin for [Poweramp](https://powerampapp.com/) <br>
 <a href="https://github.com/abhishekabhi789/LyricsForPowerAmp/releases">
 <img alt="GitHub release download count" src="https://img.shields.io/github/downloads/abhishekabhi789/LyricsForPowerAmp/total?style=for-the-badge&color=00C853&logo=github" title="GitHub release download count">
 </a>
-<a href="https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp">
+<a href="https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Ddownload_count">
 <img alt="Playstore release download count" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DDOWNLOADS%26m%3D%24totalinstalls&color=4285F4&logo=googleplay&style=for-the-badge" title="Playstore release download count">
 </a>
 <br>
-<a href="https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp" class="btn" target="_blank">
+<a href="https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Dplay_widget" class="btn" target="_blank">
 <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="240" alt="get it on Google Play"/>
 </a>
 
