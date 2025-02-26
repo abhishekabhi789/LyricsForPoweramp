@@ -34,6 +34,8 @@
     <string name="snackbar_failed_to_send_lyrics">Failed to send lyrics</string>
     <string name="snackbar_retry_sending_lyrics">Retry</string>
     <string name="snackbar_lyrics_sent_successfully">Lyrics Sent</string>
+    <string name="result_type_synced_description">Synced lyrics of this track</string>
+    <string name="result_type_plain_description">Plain lyrics of this track</string>
     <!--    about activity-->
     <string name="about">About</string>
     <string name="version">Version</string>

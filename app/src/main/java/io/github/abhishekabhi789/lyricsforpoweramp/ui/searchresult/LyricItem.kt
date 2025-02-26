@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.Audiotrack
 import androidx.compose.material.icons.outlined.InterpreterMode
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,6 +55,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -83,8 +85,13 @@ fun LyricItem(
     val lyricPages = remember { listOfNotNull(lyrics.plainLyrics, lyrics.syncedLyrics) }
     val pagerState = rememberPagerState(pageCount = { lyricPages.size }, initialPage = 0)
     var expanded by remember { mutableStateOf(false) }
+    val defaultCardColor = CardDefaults.elevatedCardColors().containerColor
 
-    ElevatedCard(modifier = modifier) {
+    ElevatedCard(
+        colors = CardDefaults.elevatedCardColors()
+            .copy(containerColor = if (expanded) MaterialTheme.colorScheme.surfaceContainerHigh else defaultCardColor),
+        modifier = modifier.scale(if (expanded) 1.01f else 1.0f)
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
@@ -185,6 +192,7 @@ fun LyricItem(
                         CustomChip(
                             label = stringResource(R.string.plain_lyrics_short),
                             selected = lyricPages[pagerState.currentPage] == lyrics.plainLyrics,
+                            tooltipDescription = stringResource(R.string.result_type_plain_description),
                             icon = R.drawable.ic_plain_lyrics
                         ) { scope.launch { pagerState.animateScrollToPage(0) } }
                     }
@@ -192,6 +200,7 @@ fun LyricItem(
                         CustomChip(
                             label = stringResource(R.string.synced_lyrics_short),
                             selected = lyricPages[pagerState.currentPage] == lyrics.syncedLyrics,
+                            tooltipDescription = stringResource(R.string.result_type_synced_description),
                             icon = R.drawable.ic_synced_lyrics
                         ) { scope.launch { pagerState.animateScrollToPage(lyricPages.lastIndex) } }
                     }
