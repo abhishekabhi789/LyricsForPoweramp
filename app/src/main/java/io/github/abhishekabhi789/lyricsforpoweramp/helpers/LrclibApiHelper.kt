@@ -222,7 +222,8 @@ class LrclibApiHelper(private val client: OkHttpClient) {
      * Ensures either plain or synced lyrics present in each list items.*/
     private fun parseSearchResponse(searchResponse: String?): List<Lyrics>? {
         val results: Array<Lyrics>? = Gson().fromJson(searchResponse, Array<Lyrics>::class.java)
-        return results?.filter { it.plainLyrics != null || it.syncedLyrics != null }?.toList()
+        return results?.toList()
+//        return results?.filter { it.plainLyrics != null || it.syncedLyrics != null }?.toList()
     }
 
     private fun encode(text: String) = URLEncoder.encode(text, "UTF-8")

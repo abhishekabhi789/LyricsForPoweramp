@@ -12,16 +12,17 @@ import androidx.compose.ui.res.stringResource
 import io.github.abhishekabhi789.lyricsforpoweramp.R
 
 @Composable
-fun FieldClearWarning(
+fun ConfirmationDialog(
+    title: String,
+    description: String,
     modifier: Modifier = Modifier,
-    fieldLabel: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = null) },
-        title = { Text(stringResource(id = R.string.clear_field_title)) },
-        text = { Text(stringResource(R.string.input_clear_confirmation_message, fieldLabel)) },
+        title = { Text(title) },
+        text = { Text(description) },
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = { onConfirm(); onDismiss() }) {

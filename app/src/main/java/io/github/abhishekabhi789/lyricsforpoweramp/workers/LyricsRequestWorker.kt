@@ -124,7 +124,14 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
 
     private fun sendLyrics(lyrics: Lyrics?): Boolean {
         val lyricsType = AppPreference.getPreferredLyricsType(mContext)
-        val sent = sendLyricResponse(mContext, powerampTrackId, lyrics, lyricsType)
+        val markInstrumental = AppPreference.getMarkInstrumental(mContext)
+        val sent = sendLyricResponse(
+            context = mContext,
+            realId = powerampTrackId,
+            lyrics = lyrics,
+            lyricsType = lyricsType,
+            markInstrumental = markInstrumental
+        )
         val status = if (sent) R.string.sent else R.string.failed_to_send
         notify("${mContext.getString(R.string.lyrics)} ${mContext.getString(status)}")
         return sent

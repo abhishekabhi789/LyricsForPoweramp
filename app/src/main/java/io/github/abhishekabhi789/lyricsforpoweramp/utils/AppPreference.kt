@@ -18,6 +18,7 @@ object AppPreference {
     private const val SHOW_LYRICS_REQUEST_NOTIFICATION = "lyrics_requests_show_notification"
     private const val OVERWRITE_NOTIFICATION = "lyrics_requests_overwrite_existing_notification"
     private const val PREFERRED_LYRICS_TYPE = "preferred_lyrics_type"
+    private const val MARK_INSTRUMENTAL_LYRICS = "mark_instrumental_lyrics"
 
     private fun getSharedPreference(context: Context, prefName: String): SharedPreferences? {
         return context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
@@ -92,6 +93,16 @@ object AppPreference {
     fun setPreferredLyricsType(context: Context, type: LyricsType) {
         val sharedPreferences = getSharedPreference(context, OTHER_PREF)
         sharedPreferences?.edit()?.putString(PREFERRED_LYRICS_TYPE, type.name)?.apply()
+    }
+
+    fun getMarkInstrumental(context: Context): Boolean {
+        val sharedPreferences = getSharedPreference(context, OTHER_PREF)
+        return sharedPreferences?.getBoolean(MARK_INSTRUMENTAL_LYRICS, false) ?: false
+    }
+
+    fun setMarkInstrumental(context: Context, choice: Boolean) {
+        val sharedPreferences = getSharedPreference(context, OTHER_PREF)
+        sharedPreferences?.edit()?.putBoolean(MARK_INSTRUMENTAL_LYRICS, choice)?.apply()
     }
 
     @Composable

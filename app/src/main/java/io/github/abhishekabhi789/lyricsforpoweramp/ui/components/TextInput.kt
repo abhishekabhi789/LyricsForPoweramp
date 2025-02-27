@@ -94,8 +94,9 @@ fun TextInput(
             .onFocusChanged { state -> isFocused = state.isFocused }
     )
     if (showClearWarningDialog) {
-        FieldClearWarning(
-            fieldLabel = label,
+        ConfirmationDialog(
+            title = stringResource(id = R.string.clear_field_title),
+            description = stringResource(R.string.input_clear_confirmation_message, label),
             onConfirm = { onValueChange("") },
             onDismiss = { showClearWarningDialog = false }
         )

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -82,7 +81,7 @@ fun LyricItem(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val lyricPages = remember { listOfNotNull(lyrics.plainLyrics, lyrics.syncedLyrics) }
+    val lyricPages = remember(lyrics) { listOfNotNull(lyrics.plainLyrics, lyrics.syncedLyrics) }
     val pagerState = rememberPagerState(pageCount = { lyricPages.size }, initialPage = 0)
     var expanded by remember { mutableStateOf(false) }
     val defaultCardColor = CardDefaults.elevatedCardColors().containerColor
@@ -94,9 +93,7 @@ fun LyricItem(
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .padding(top = 8.dp)
+            modifier = Modifier.padding(8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -110,29 +107,12 @@ fun LyricItem(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(AssistChipDefaults.IconSize)
                 )
-                Box(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = lyrics.trackName,
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
-                if (isLaunchedFromPowerAmp) {
-                    var preferredLyricsType by rememberSaveable {
-                        mutableStateOf(AppPreference.getPreferredLyricsType(context))
-                    }
-                    val availableLyrics = buildList {
-                        if (!lyrics.syncedLyrics.isNullOrBlank()) add(LyricsType.SYNCED)
-                        if (!lyrics.plainLyrics.isNullOrBlank()) add(LyricsType.PLAIN)
-                    }
-                    val chosenType by remember { derivedStateOf { if (preferredLyricsType in availableLyrics) preferredLyricsType else availableLyrics.first() } }
-                    SendLyricsButton(
-                        availableLyricsTypes = availableLyrics,
-                        chosenType = chosenType,
-                        onTypeChanged = { preferredLyricsType = it }
-                    ) { onLyricChosen(lyrics, preferredLyricsType) }
-                }
+                Text(
+                    text = lyrics.trackName,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -169,25 +149,27 @@ fun LyricItem(
                 )
             }
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.Timer,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(AssistChipDefaults.IconSize)
-                    )
-                    Text(
-                        text = lyrics.getFormattedDuration(),
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                FlowRow {
+                Icon(
+                    imageVector = Icons.Outlined.Timer,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(AssistChipDefaults.IconSize)
+                )
+                Text(
+                    text = lyrics.getFormattedDuration(),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                FlowRow(verticalArrangement = Arrangement.Bottom) {
                     if (lyrics.plainLyrics != null) {
                         CustomChip(
                             label = stringResource(R.string.plain_lyrics_short),
@@ -205,54 +187,81 @@ fun LyricItem(
                         ) { scope.launch { pagerState.animateScrollToPage(lyricPages.lastIndex) } }
                     }
                 }
+                if (isLaunchedFromPowerAmp) {
+                    val preferredLyricsType by rememberSaveable {
+                        mutableStateOf(AppPreference.getPreferredLyricsType(context))
+                    }
+                    var preferredLyricsTypeName = stringResource(preferredLyricsType.label)
+                    val availableLyrics = buildList {
+                        if (!lyrics.syncedLyrics.isNullOrBlank()) add(LyricsType.SYNCED.label)
+                        if (!lyrics.plainLyrics.isNullOrBlank()) add(LyricsType.PLAIN.label)
+                        if (lyrics.instrumental == true) add(R.string.mark_this_track_instrumental)
+                    }.map { stringResource(it) }
+
+                    val chosenType = when {
+                        preferredLyricsTypeName in availableLyrics -> preferredLyricsTypeName
+                        else -> availableLyrics.first()
+                    }
+
+                    SendLyricsButton(
+                        availableLyricsTypes = availableLyrics,
+                        preferredLyricsType = chosenType,
+                        onTypeChanged = { preferredLyricsTypeName = it }
+                    ) { onLyricChosen(lyrics, preferredLyricsType) }
+                }
             }
         }
-        HorizontalDivider(modifier = Modifier.padding(4.dp))
-        Box(contentAlignment = Alignment.TopEnd) {
-            HorizontalPager(
-                state = pagerState,
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier.animateContentSize()
-            ) { pageIndex ->
-                val lyricsInView by remember { derivedStateOf { lyricPages[pageIndex] } }
-                Text(
-                    text = if (expanded) lyricsInView
-                    else lyricsInView.lines().run {
-                        subList(0, size.coerceAtMost(6)).joinToString("\n")
-                    },
-                    style = TextStyle(
-                        fontStyle = FontStyle.Italic,
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable(interactionSource = null, indication = null) {
-                            expanded = !expanded
-                        }
+        if (lyricPages.isNotEmpty()) {
+            HorizontalDivider(modifier = Modifier.padding(4.dp))
+            Box(contentAlignment = Alignment.TopEnd) {
+                HorizontalPager(
+                    state = pagerState,
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.animateContentSize()
+                ) { pageIndex ->
+                    val lyricsInView by remember(pageIndex) { derivedStateOf { lyricPages[pageIndex] } }
+                    Text(
+                        text = if (expanded) lyricsInView
+                        else lyricsInView.lines().run {
+                            subList(0, size.coerceAtMost(6)).joinToString("\n")
+                        },
+                        style = TextStyle(
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable(interactionSource = null, indication = null) {
+                                expanded = !expanded
+                            }
+                    )
+                }
+
+                val rotationAnimation = animateFloatAsState(
+                    targetValue = if (expanded) -180f else 0f,
+                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                    label = "expand icon rotation animation"
                 )
+                Icon(
+                    imageVector = Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 12.dp, top = 8.dp)
+                        .graphicsLayer {
+                            translationY = -60 * abs(pagerState.currentPageOffsetFraction)
+                            rotationZ = rotationAnimation.value
+                            alpha =
+                                abs(1 - abs(pagerState.currentPageOffsetFraction * 2)).coerceIn(
+                                    0f,
+                                    1f
+                                )
+                        }
+                        .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
+
+                )
+
             }
-
-            val rotationAnimation = animateFloatAsState(
-                targetValue = if (expanded) -180f else 0f,
-                animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-                label = "expand icon rotation animation"
-            )
-            Icon(
-                imageVector = Icons.Default.ExpandMore,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 12.dp, top = 8.dp)
-                    .graphicsLayer {
-                        translationY = -60 * abs(pagerState.currentPageOffsetFraction)
-                        rotationZ = rotationAnimation.value
-                        alpha =
-                            abs(1 - abs(pagerState.currentPageOffsetFraction * 2)).coerceIn(0f, 1f)
-                    }
-                    .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-
-            )
-
         }
     }
 }
@@ -261,19 +270,21 @@ fun LyricItem(
 @Composable
 fun SendLyricsButton(
     modifier: Modifier = Modifier,
-    availableLyricsTypes: List<LyricsType>,
-    chosenType: LyricsType,
-    onTypeChanged: (LyricsType) -> Unit,
+    preferredLyricsType: String,
+    availableLyricsTypes: List<String>,
+    onTypeChanged: (String) -> Unit,
     onSend: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     Surface(
         shape = AssistChipDefaults.shape,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        modifier = modifier
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.clickable { onSend() }) {
                 Icon(
                     imageVector = Icons.Default.Check,
@@ -281,8 +292,8 @@ fun SendLyricsButton(
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = stringResource(chosenType.label),
-                    textAlign = TextAlign.End,
+                    text = preferredLyricsType,
+                    textAlign = TextAlign.Start,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -307,10 +318,10 @@ fun SendLyricsButton(
                 ) {
                     availableLyricsTypes.forEach { value ->
                         DropdownMenuItem(
-                            text = { Text(text = stringResource(value.label)) },
+                            text = { Text(text = value) },
                             colors = MenuDefaults.itemColors()
                                 .copy(
-                                    textColor = if (value == chosenType)
+                                    textColor = if (value == preferredLyricsType)
                                         MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
                                 ),
                             onClick = {
@@ -333,6 +344,7 @@ fun PreviewLyricItem() {
         artistName = "Artists Name 1",
         albumName = "Album Name 1",
         duration = 200.0,
+        instrumental = false,
         plainLyrics = "1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n Nunc sit amet turpis et odio egestas finibus vel quis nisi.\n Duis aliquam tortor non dui tempor, et sodales orci tempus.\n Mauris fermentum mauris quis commodo viverra.\n Suspendisse scelerisque lorem eu dolor fringilla ultrices.\n Suspendisse scelerisque lorem eu dolor fringilla ultrices.\n Suspendisse scelerisque lorem eu dolor fringilla ultrices.",
         syncedLyrics = "[00:10.00] 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n [00:20.10] Nunc sit amet turpis et odio egestas finibus vel quis nisi.\n [00:30.20] Duis aliquam tortor non dui tempor, et sodales orci tempus.\n [00:40.30] Mauris fermentum mauris quis commodo viverra.\n [00:50.40] Suspendisse scelerisque lorem eu dolor fringilla ultrices.\n [01:00.50] Suspendisse scelerisque lorem eu dolor fringilla ultrices.\n [01:10.00] Suspendisse scelerisque lorem eu dolor fringilla ultrices."
     )

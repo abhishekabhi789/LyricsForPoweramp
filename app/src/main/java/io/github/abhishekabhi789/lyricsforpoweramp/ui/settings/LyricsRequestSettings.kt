@@ -207,5 +207,28 @@ fun LyricsRequestSettings(modifier: Modifier = Modifier) {
                 getLabel = { stringResource(it.label) }
             )
         }
+        BasicSettings(
+            label = stringResource(R.string.settings_mark_instrumental_tracks),
+            description = stringResource(R.string.settings_mark_instrumental_tracks_description)
+        ) {
+            var markInstrumental by remember {
+                mutableStateOf(AppPreference.getMarkInstrumental(context))
+            }
+            val accessibilityLabel = (if (markInstrumental) stringResource(R.string.disable)
+            else stringResource(R.string.enable)).let {
+                "$it ${stringResource(R.string.settings_mark_instrumental_tracks)}"
+            }
+            Switch(
+                checked = markInstrumental,
+                onCheckedChange = {
+                    markInstrumental = it
+                    AppPreference.setMarkInstrumental(context, it)
+                },
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .semantics { contentDescription = accessibilityLabel }
+
+            )
+        }
     }
 }

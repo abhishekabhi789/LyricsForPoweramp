@@ -36,6 +36,7 @@
     <string name="snackbar_lyrics_sent_successfully">Lyrics Sent</string>
     <string name="result_type_synced_description">Synced lyrics of this track</string>
     <string name="result_type_plain_description">Plain lyrics of this track</string>
+    <string name="mark_this_track_instrumental">Mark Instrumental</string>
     <!--    about activity-->
     <string name="about">About</string>
     <string name="version">Version</string>
@@ -66,6 +67,8 @@
     <string name="settings_overwrite_existing_notification_description">A new notification will replace the previous one.</string>
     <string name="settings_preferred_lyrics_type_label">Preferred Lyrics Type</string>
     <string name="settings_preferred_lyrics_type_description">Set a default preference for synced or plain lyrics.</string>
+    <string name="settings_mark_instrumental_tracks">Mark Instrumentals Songs</string>
+    <string name="settings_mark_instrumental_tracks_description">Tag non-vocal tracks as instrumental. Poweramp will not ask again lyrics for these tracks.</string>
     <string name="settings_filter_label">Filters</string>
     <string name="settings_filter_description">These words will be removed from respective fields while processing. Case insensitive. Supports regex.</string>
     <string name="settings_filter_title_label">Title Filter</string>

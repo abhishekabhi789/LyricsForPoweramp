@@ -17,7 +17,21 @@ import io.github.abhishekabhi789.lyricsforpoweramp.utils.AppPreference.FILTER
  */
 object PowerampApiHelper {
 
-    private val TAG = javaClass.simpleName
+    private const val TAG = "PowerampApiHelper"
+    private const val INSTRUMENTAL_MARKING = "Instrumental Track" +
+            """
+                   .♫♫♫♫.
+                  ♫♫♫♫♫♫
+                  ♫♫♫♫♫'
+                ♫
+                ♫
+                ♫
+                ♫
+                ♫
+    ,♫♫♫♫♫
+    ♫♫♫♫♫'
+    `♫♫♫'
+"""
 
     /**
      * Makes a [Track] for the intent passed by PowerAmp
@@ -73,17 +87,27 @@ object PowerampApiHelper {
         realId: Long,
         lyrics: Lyrics?,
         lyricsType: LyricsType,
+        markInstrumental: Boolean? = false
     ): Boolean {
         val infoLine = makeInfoLine(context, lyrics)
         val intent = Intent(PowerampAPI.Lyrics.ACTION_UPDATE_LYRICS).apply {
             putExtra(PowerampAPI.EXTRA_ID, realId)
-            putExtra(
-                PowerampAPI.Lyrics.EXTRA_LYRICS,
-                when (lyricsType) {
-                    LyricsType.PLAIN -> lyrics?.plainLyrics ?: lyrics?.syncedLyrics
-                    LyricsType.SYNCED -> lyrics?.syncedLyrics ?: lyrics?.plainLyrics
+            if (lyrics?.instrumental == true) {
+                Log.i(TAG, "sendLyricResponse: track is instrumental")
+                if (markInstrumental == true) {
+                    Log.d(TAG, "sendLyricResponse: marking as instrumental")
+                    putExtra(PowerampAPI.Lyrics.EXTRA_LYRICS, INSTRUMENTAL_MARKING)
                 }
-            )
+            } else {
+                Log.d(TAG, "sendLyricResponse: track is vocal")
+                putExtra(
+                    PowerampAPI.Lyrics.EXTRA_LYRICS,
+                    when (lyricsType) {
+                        LyricsType.PLAIN -> lyrics?.plainLyrics ?: lyrics?.syncedLyrics
+                        LyricsType.SYNCED -> lyrics?.syncedLyrics ?: lyrics?.plainLyrics
+                    }
+                )
+            }
             putExtra(PowerampAPI.Lyrics.EXTRA_INFO_LINE, infoLine)
         }
 

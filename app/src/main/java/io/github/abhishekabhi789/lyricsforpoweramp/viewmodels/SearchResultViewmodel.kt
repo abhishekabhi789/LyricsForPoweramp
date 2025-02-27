@@ -29,12 +29,18 @@ class SearchResultViewmodel : ViewModel() {
 
     /** Will send the chosen lyrics to PowerAmp. Should call when have realId
      * @return [Boolean] indicating request attempt result*/
-    fun sendLyricsToPoweramp(context: Context, lyrics: Lyrics, lyricsType: LyricsType): Boolean {
+    fun sendLyricsToPoweramp(
+        context: Context,
+        lyrics: Lyrics,
+        lyricsType: LyricsType,
+        markInstrumental: Boolean? = false
+    ): Boolean {
         return PowerampApiHelper.sendLyricResponse(
             context = context,
             realId = powerampId!!,
             lyrics = lyrics,
-            lyricsType = lyricsType
+            lyricsType = lyricsType,
+            markInstrumental = markInstrumental
         )
     }
 }

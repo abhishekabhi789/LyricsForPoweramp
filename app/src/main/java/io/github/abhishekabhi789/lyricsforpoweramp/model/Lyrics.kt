@@ -14,7 +14,8 @@ data class Lyrics(
     @SerializedName("albumName") val albumName: String,
     @SerializedName("plainLyrics") val plainLyrics: String?,
     @SerializedName("syncedLyrics") val syncedLyrics: String?,
-    @SerializedName("duration") val duration: Double
+    @SerializedName("duration") val duration: Double,
+    @SerializedName("instrumental") val instrumental: Boolean?,
 ) : Parcelable {
     /** [duration] in readable format. */
     fun getFormattedDuration(): String {

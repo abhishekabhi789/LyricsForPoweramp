@@ -176,8 +176,9 @@ fun TextInputWithChips(
 
     }
     if (showClearWarningDialog) {
-        FieldClearWarning(
-            fieldLabel = fieldLabel,
+        ConfirmationDialog(
+            title = stringResource(id = R.string.clear_field_title),
+            description = stringResource(R.string.input_clear_confirmation_message, fieldLabel),
             onConfirm = {
                 chipList.clear()
                 onInputChange(chipList)
