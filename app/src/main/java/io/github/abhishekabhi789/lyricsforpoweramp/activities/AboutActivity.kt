@@ -29,4 +29,8 @@ class AboutActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        const val TAG = "AboutActivity"
+    }
 }

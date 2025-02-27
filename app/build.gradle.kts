@@ -23,7 +23,17 @@ android {
         buildConfigField(
             type = "String",
             name = "GITHUB_REPO_URL",
-            value = "\"https://github.com/abhishekabhi789/Lyrics4PowerAmp\""
+            value = "\"https://github.com/abhishekabhi789/LyricsForPoweramp\""
+        )
+        buildConfigField(
+            type = "String",
+            name = "PLAY_STORE_URL",
+            value = "\"https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp\""
+        )
+        buildConfigField(
+            type = "String",
+            name = "KO_FI_URL",
+            value = "\"https://ko-fi.com/abhishekabhi789\""
         )
     }
 
