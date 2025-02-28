@@ -1,10 +1,9 @@
 <div align="center">
-
-[![App Icon](assets/app_icon.png)](#)
+<img src="https://abhishekabhi789.github.io/LyricsForPoweramp/assets/app_icon.png" alt="App Icon">
 <br>
-[![App Name](assets/app_name.png)](#)
+<img src="https://abhishekabhi789.github.io/LyricsForPoweramp/assets/app_name.png" alt="App Name">
 <br>
-A lyrics plugin for [Poweramp](https://powerampapp.com/) <br>
+A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 <br>
 <a href="https://developer.android.com/tools/releases/platforms#5.0">
 <img alt="API 21+" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=for-the-badge&color=FF0800&logo=android" title="Android 6.0 Marshmallow">
@@ -22,9 +21,24 @@ A lyrics plugin for [Poweramp](https://powerampapp.com/) <br>
 
 </div>
 
+### :package: Download
+
+| GitHub                                                                                                                                                                            | Play Store                                                                                                                                                                                                                                                            |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ![Latest Version](https://img.shields.io/github/v/release/abhishekabhi789/LyricsForPoweramp?style=for-the-badge&logo=github&color=black&label=Version)                            | ![Latest Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DLatest%26m%3D%24version&style=for-the-badge&logo=google-play&label=Release&color=yellow) |
+| ![Release Date](https://img.shields.io/github/release-date/abhishekabhi789/LyricsForPoweramp?display_date=published_at&style=for-the-badge&logo=github&color=black&label=Updated) | ![Release Date](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DUpdated%26m%3D%24published&style=for-the-badge&logo=google-play&color=yellow)              |
+| [Goto Latest Release](https://github.com/abhishekabhi789/LyricsForPowerAmp/releases)                                                                                              | [View on Play Store](https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Ddownload_table)                                                                    |
+
+> [!NOTE]  
+> The Google Play version contains extra features including premium features that require purchase.
+> Basic functionalities are free as same as GitHub version.
+
+> [!IMPORTANT]
+> Play Store builds are signed by Google hence you can't update GitHub Varient from Play Store.
+
 ### :flower_playing_cards: Screenshots
 
-[![App Screenshots](assets/Screenshots_L4PA.png)](#)
+[![App Screenshots](https://abhishekabhi789.github.io/LyricsForPoweramp/assets/Screenshots_L4PA.png)](#)
 
 ### :shield: Permissions
 
@@ -33,76 +47,11 @@ A lyrics plugin for [Poweramp](https://powerampapp.com/) <br>
 
 ### :wrench: Setup and Usage
 
-No changes are required in Poweramp settings to use this app.
+See [Usage Instructions](https://abhishekabhi789.github.io/LyricsForPoweramp/INSTRUCTIONS)
 
-This app is a lyrics plugin, not a standalone lyrics app.
-You cannot directly view lyrics in this plugin or select it as a _Preferred Lyrics App_ in Poweramp
-settings.
+### :lock_with_ink_pen: Privacy Policy
 
-Poweramp automatically sends a lyrics request when it doesn't have lyrics available for a track.
-
-- #### App settings
-
-    - #### Theme
-      You can manually change the app's theme.
-      Devices running Android 10+ can choose system default mode to follow system theme.
-
-    - #### Lyrics Request.
-
-        - #### Fallback to Search Method
-          If the plugin
-          cannot [find the best match](https://lrclib.net/docs#:~:text=Get%20lyrics%20with%20a%20track's%20signature),
-          it will fallback to
-          a [search method](https://lrclib.net/docs#:~:text=Search%20for%20lyrics%20records) which
-          may occasionally retrieve incorrect lyrics.
-
-        - #### Notify on Lyrics Request Failure
-          If the lyrics request fails, the app posts a notification. From this notification, you can
-          launch the plugin prepopulated with track metadata to perform a manual search and update
-          the lyrics.
-
-        - #### Replace previous notification
-          Enabling this option replaces the previous notification with a new one, preventing the
-          notification panel from being flooded with failure notifications.
-          However, this means you can perform manual search only for the most recent failed track.
-        - #### Preferred Lyrics Type
-          Choose whether the app should always try to send synced or plain lyrics to Poweramp.
-          If the chosen type is not available for a track, the other type will be sent if available.
-
-    - #### Filters
-      You can specify filters for the title, artist, and album fields to remove matches from the
-      corresponding search parameter.
-      Filters can be strings or regular expressions.  
-      For example, to exclude strings like `320kbps` from track title, enter `\d{3}kbps` in the
-      title filter box. This will remove any such matches from the title.
-
-
-- #### Search Modes
-
-  The app offers two search options:
-
-    * **Coarse Search**: Performs a keyword-based search that yields a broad range of results.
-      This method sacrifices accuracy for quantity.
-
-    * **Fine Search**: Focuses on specific fields such as track title, artist name, and album name.
-      It provides more relevant results but limits the number of matches returned.
-
-### :information_source: Notes
-
-- Lyrics sent to Poweramp by this plugin are cached by Poweramp and will be available offline.
-- Poweramp makes a request only when the track doesn't have any lyrics to display.
-- When Poweramp initiates a lyrics request, you'll see the message “Searching lyrics via plugin” in
-  the Poweramp lyrics UI.
-- For every lyrics request received, the plugin will try to get the best match avilable.
-  If this fails and the fallback method is enabled, it performs a fine search operation and selects
-  the first result, if available.
-- To update lyrics set by this plugin, play the track in Poweramp and open the Lyrics UI.
-  At the top, you'll find an icon button(:fast_forward:) next to the plugin name.
-  Tap on it to launch the plugin and perform a search to retrieve available lyrics.
-  Each lyrics result contains a choose icon(:heavy_check_mark:), upon clicking on it will send the
-  lyrics to poweramp.
-- To reset/delete all lyrics set by this plugin, perform a full rescan
-  `Poweramp Settings → Library → Full Rescan`
+Read the Privacy Policy [Here](https://abhishekabhi789.github.io/LyricsForPoweramp/PRIVACY_POLICY)
 
 ### :books: References
 
@@ -112,3 +61,7 @@ Poweramp automatically sends a lyrics request when it doesn't have lyrics availa
 ### :gift_heart: Support
 
 <a href='https://ko-fi.com/X8X1V9VTH' target='_blank'><img style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com'/></a>
+
+### :running: Check Out Other Projects
+
+Visit [Website](https://abhishekabhi789.github.io/)

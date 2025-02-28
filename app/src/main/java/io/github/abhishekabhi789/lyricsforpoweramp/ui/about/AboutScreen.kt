@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.HelpCenter
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -66,6 +67,7 @@ fun AboutScreen(modifier: Modifier = Modifier, onFinish: () -> Unit) {
     val context = LocalContext.current
     val playStoreUrl =
         BuildConfig.PLAY_STORE_URL + "&referrer=utm_source=app&utm_medium=l4pa&utm_campaign=about"
+    val guideUrl = "https://abhishekabhi789.github.io/LyricsForPoweramp/guide"
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.about)) },
@@ -88,7 +90,7 @@ fun AboutScreen(modifier: Modifier = Modifier, onFinish: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 16.dp)
         ) {
             item {
                 ElevatedCard(
@@ -155,18 +157,23 @@ fun AboutScreen(modifier: Modifier = Modifier, onFinish: () -> Unit) {
                     ) {
                         AssistChip(
                             onClick = { browseUrl(context, BuildConfig.GITHUB_REPO_URL) },
-                            label = { Text("Visit Github Repo") },
+                            label = { Text(stringResource(R.string.link_to_github)) },
                             leadingIcon = { Icon(painterResource(R.drawable.ic_github), null) }
                         )
                         AssistChip(
                             onClick = { browseUrl(context, playStoreUrl) },
-                            label = { Text("Get from Play Store") },
+                            label = { Text(stringResource(R.string.link_to_playstore)) },
                             leadingIcon = { Icon(painterResource(R.drawable.ic_playstore), null) }
                         )
                         AssistChip(
                             onClick = { browseUrl(context, BuildConfig.KO_FI_URL) },
-                            label = { Text("Donate via Ko-Fi") },
+                            label = { Text(stringResource(R.string.link_to_ko_fi)) },
                             leadingIcon = { Icon(painterResource(R.drawable.ic_kofi), null) }
+                        )
+                        AssistChip(
+                            onClick = { browseUrl(context, guideUrl) },
+                            label = { Text(stringResource(R.string.link_to_guide)) },
+                            leadingIcon = { Icon(Icons.AutoMirrored.Filled.HelpCenter, null) }
                         )
                     }
                     TextButton(onClick = {
@@ -185,6 +192,6 @@ fun browseUrl(context: Context, url: String) {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     } catch (e: Exception) {
         Log.e(TAG, "browseUrl: unable to open link $url")
-        Toast.makeText(context, "Unable to open link", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.toast_failed_to_browse_link, Toast.LENGTH_SHORT).show()
     }
 }
