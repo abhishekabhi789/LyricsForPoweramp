@@ -1,8 +1,8 @@
 <div align="center">
-<img src="https://abhishekabhi789.github.io/LyricsForPoweramp/assets/app_icon.png" alt="App Icon">
+
+[![App Icon](docs/assets/app_icon.png)](#)
 <br>
-<img src="https://abhishekabhi789.github.io/LyricsForPoweramp/assets/app_name.png" alt="App Name">
-<br>
+[![App Name](docs/assets/app_name.png)](#)
 A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 <br>
 <a href="https://developer.android.com/tools/releases/platforms#5.0">
@@ -12,7 +12,7 @@ A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 <img alt="GitHub release download count" src="https://img.shields.io/github/downloads/abhishekabhi789/LyricsForPowerAmp/total?style=for-the-badge&color=00C853&logo=github" title="GitHub release download count">
 </a>
 <a href="https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Ddownload_count">
-<img alt="Playstore release download count" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DDOWNLOADS%26m%3D%24totalinstalls&color=4285F4&logo=googleplay&style=for-the-badge" title="Playstore release download count">
+<img alt="Play Store release download count" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DDOWNLOADS%26m%3D%24totalinstalls&color=4285F4&logo=googleplay&style=for-the-badge" title="Play Store release download count">
 </a>
 <br>
 <a href="https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Dplay_widget" class="btn" target="_blank">
@@ -31,14 +31,14 @@ A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 
 > [!NOTE]  
 > The Google Play version contains extra features including premium features that require purchase.
-> Basic functionalities are free as same as GitHub version.
+> Basic functionalities are free, same as the GitHub version.
 
 > [!IMPORTANT]
-> Play Store builds are signed by Google hence you can't update GitHub Varient from Play Store.
+> Play Store builds are signed by Google hence you can't update GitHub Variant from Play Store.
 
 ### :flower_playing_cards: Screenshots
 
-[![App Screenshots](https://abhishekabhi789.github.io/LyricsForPoweramp/assets/Screenshots_L4PA.png)](#)
+[![App Screenshots](docs/assets/Screenshots_L4PA.png)](#)
 
 ### :shield: Permissions
 
@@ -47,11 +47,11 @@ A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 
 ### :wrench: Setup and Usage
 
-See [Usage Instructions](https://abhishekabhi789.github.io/LyricsForPoweramp/INSTRUCTIONS)
+See [Usage Instructions](docs/guide.md)
 
 ### :lock_with_ink_pen: Privacy Policy
 
-Read the Privacy Policy [Here](https://abhishekabhi789.github.io/LyricsForPoweramp/PRIVACY_POLICY)
+Read the Privacy Policy [Here](docs/privacy-policy.md)
 
 ### :books: References
 
