@@ -198,7 +198,7 @@ fun LyricsRequestSettings(modifier: Modifier = Modifier) {
             DropdownSettings(
                 expanded = expanded,
                 currentValue = preferredLyricsType,
-                values = LyricsType.entries,
+                values = listOf(LyricsType.SYNCED, LyricsType.PLAIN),
                 onSelection = {
                     preferredLyricsType = it
                     AppPreference.setPreferredLyricsType(context, it)

@@ -20,9 +20,8 @@ object PowerampApiHelper {
     private const val TAG = "PowerampApiHelper"
     private const val INSTRUMENTAL_MARKING = "Instrumental Track" +
             """
-                   .♫♫♫♫.
-                  ♫♫♫♫♫♫
-                  ♫♫♫♫♫'
+                  .♫♫♫.
+                  ♫♫♫♫'
                 ♫
                 ♫
                 ♫
@@ -105,6 +104,7 @@ object PowerampApiHelper {
                     when (lyricsType) {
                         LyricsType.PLAIN -> lyrics?.plainLyrics ?: lyrics?.syncedLyrics
                         LyricsType.SYNCED -> lyrics?.syncedLyrics ?: lyrics?.plainLyrics
+                        LyricsType.INSTRUMENTAL -> INSTRUMENTAL_MARKING //dummy
                     }
                 )
             }
