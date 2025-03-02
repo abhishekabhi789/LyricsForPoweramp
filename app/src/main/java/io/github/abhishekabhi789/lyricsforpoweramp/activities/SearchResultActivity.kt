@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,13 +35,11 @@ import java.io.Serializable
 
 class SearchResultActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val searchResult: List<Lyrics>? = intent.extras?.let {
             BundleCompat.getParcelableArrayList(it, KEY_RESULT, Lyrics::class.java)
         }
-        val appTheme: AppPreference.AppTheme = getSerializableExtra(intent, KEY_APP_THEME)
-            ?: AppPreference.AppTheme.Light // set light as default
+        val preferredTheme = AppPreference.getTheme(this)
         val realId: Long? = getSerializableExtra(intent, KEY_POWERAMP_REAL_ID)
 
         setContent {
@@ -50,7 +49,18 @@ class SearchResultActivity : ComponentActivity() {
             realId?.let { viewmodel.setPowerampId(it) }
             val lyricsList by viewmodel.searchResults.collectAsState()
             val powerampId: Long? = viewmodel.powerampId
-            LyricsForPowerAmpTheme(useDarkTheme = AppPreference.isDarkTheme(theme = appTheme)) {
+            val useDarkTheme = AppPreference.isDarkTheme(theme = preferredTheme)
+            enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.auto(
+                    lightScrim = android.graphics.Color.TRANSPARENT,
+                    darkScrim = android.graphics.Color.TRANSPARENT,
+                ) { useDarkTheme },
+                navigationBarStyle = SystemBarStyle.auto(
+                    lightScrim = android.graphics.Color.TRANSPARENT,
+                    darkScrim = android.graphics.Color.TRANSPARENT,
+                ) { useDarkTheme },
+            )
+            LyricsForPowerAmpTheme(useDarkTheme = useDarkTheme) {
                 val snackbarHostState = remember { SnackbarHostState() }
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -138,7 +148,6 @@ class SearchResultActivity : ComponentActivity() {
     companion object {
         private const val TAG = "SearchResultActivity"
         const val KEY_RESULT = "search_result"
-        const val KEY_APP_THEME = "app_theme"
         const val KEY_POWERAMP_REAL_ID = "poweramp_id"
     }
 }

@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="SplashScreenTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@android:color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen_animation</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="postSplashScreenTheme">@style/Theme.AppTheme</item>
     </style>
-    <style name="Theme.AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar"/>
+
+    <style name="Theme.AppTheme" parent="android:style/Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.OssLicenseTheme" parent="Theme.AppCompat.DayNight">
+        <!--temporary workaround to fix the edgeToEdge and actionBar clash in license activities-->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:ignore="NewApi">true</item>
+    </style>
 </resources>

@@ -24,17 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.abhishekabhi789.lyricsforpoweramp.R
-import io.github.abhishekabhi789.lyricsforpoweramp.viewmodels.MainActivityViewModel
+import io.github.abhishekabhi789.lyricsforpoweramp.viewmodels.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppSettings(
     modifier: Modifier = Modifier,
-    viewModel: MainActivityViewModel,
+    viewmodel: SettingsViewModel = viewModel(),
     onClose: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -81,16 +80,9 @@ fun AppSettings(
                 .consumeWindowInsets(contentPadding)
                 .padding(horizontal = 8.dp)
         ) {
-            item { AppThemeSettings(viewModel = viewModel) }
+            item { AppThemeSettings(viewmodel = viewmodel) }
             item { LyricsRequestSettings() }
             item { FilterSettings() }
         }
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun PreviewAppSettings() {
-    val viewModel: MainActivityViewModel = viewModel()
-    AppSettings(viewModel = viewModel) {}
 }

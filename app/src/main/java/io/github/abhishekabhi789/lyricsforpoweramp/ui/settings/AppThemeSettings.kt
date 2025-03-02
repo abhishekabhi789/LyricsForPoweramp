@@ -12,10 +12,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.abhishekabhi789.lyricsforpoweramp.R
 import io.github.abhishekabhi789.lyricsforpoweramp.utils.AppPreference
-import io.github.abhishekabhi789.lyricsforpoweramp.viewmodels.MainActivityViewModel
+import io.github.abhishekabhi789.lyricsforpoweramp.viewmodels.SettingsViewModel
 
 @Composable
-fun AppThemeSettings(modifier: Modifier = Modifier, viewModel: MainActivityViewModel) {
+fun AppThemeSettings(modifier: Modifier = Modifier, viewmodel: SettingsViewModel) {
     SettingsGroup(
         modifier = modifier,
         title = stringResource(id = R.string.settings_app_theme_label),
@@ -34,7 +34,7 @@ fun AppThemeSettings(modifier: Modifier = Modifier, viewModel: MainActivityViewM
                 onSelection = { selectedTheme ->
                     currentTheme = selectedTheme
                     AppPreference.setTheme(context, selectedTheme)
-                    viewModel.updateTheme(selectedTheme)
+                    viewmodel.updateTheme(selectedTheme)
                 },
                 onExpandedChanged = { expanded = it },
                 getLabel = { theme -> stringResource(theme.label) }

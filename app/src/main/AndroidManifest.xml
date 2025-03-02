@@ -47,10 +47,10 @@
             android:theme="@style/Theme.AppTheme" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.AppCompat.DayNight" />
+            android:theme="@style/Theme.OssLicenseTheme" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/Theme.AppCompat.DayNight" />
+            android:theme="@style/Theme.OssLicenseTheme" />
 
         <receiver
             android:name=".receivers.LyricsRequestReceiver"
