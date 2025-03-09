@@ -17,6 +17,7 @@ import io.github.abhishekabhi789.lyricsforpoweramp.helpers.LrclibApiHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.NotificationHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.PowerampApiHelper.sendLyricResponse
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Lyrics
+import io.github.abhishekabhi789.lyricsforpoweramp.model.LyricsType
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Track
 import io.github.abhishekabhi789.lyricsforpoweramp.receivers.LyricsRequestReceiver
 import io.github.abhishekabhi789.lyricsforpoweramp.utils.AppPreference
@@ -58,15 +59,17 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
     private suspend fun handleLyricsRequest(dispatcher: CoroutineDispatcher = Dispatchers.IO): Result {
         notify(content = mContext.getString(R.string.preparing_search_track))
         Log.i(TAG, "handleLyricsRequest: request for $mTrack")
+        val preferredLyricsType = AppPreference.getPreferredLyricsType(mContext)
         return withTimeoutOrNull(POWERAMP_LYRICS_REQUEST_WAIT_TIMEOUT) {
             var result: Result = Result.failure()
             CoroutineScope(dispatcher).launch {
                 getLyrics(
                     track = mTrack,
+                    lyricsType = preferredLyricsType,
                     dispatcher = dispatcher,
                     onSuccess = {
                         notify(mContext.getString(R.string.sending_lyrics))
-                        sendLyrics(it).also { success ->
+                        sendLyrics(it, preferredLyricsType).also { success ->
                             if (success) mNotificationHelper.cancelNotification()
                             else suggestManualSearch()
                             result = Result.success()
@@ -90,6 +93,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
 
     private suspend fun getLyrics(
         track: Track,
+        lyricsType: LyricsType,
         dispatcher: CoroutineDispatcher,
         onSuccess: (Lyrics) -> Unit,
         onError: (LrclibApiHelper.Error) -> Unit
@@ -110,7 +114,16 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
                         mLrclibApiHelper.searchLyricsForTrack(
                             query = track,
                             dispatcher = dispatcher,
-                            onResult = { onSuccess(it.first()) },
+                            onResult = { results: List<Lyrics> ->
+                                val lyrics = if (lyricsType == LyricsType.SYNCED) {
+                                    results.firstOrNull { it.syncedLyrics != null }
+                                        ?: results.firstOrNull { it.plainLyrics != null }
+                                } else {
+                                    results.firstOrNull { it.plainLyrics != null }
+                                        ?: results.firstOrNull { it.syncedLyrics != null }
+                                }
+                                lyrics?.let { onSuccess(it) }
+                            },
                             onError = onError
                         )
                     }
@@ -122,8 +135,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
         )
     }
 
-    private fun sendLyrics(lyrics: Lyrics?): Boolean {
-        val lyricsType = AppPreference.getPreferredLyricsType(mContext)
+    private fun sendLyrics(lyrics: Lyrics?, lyricsType: LyricsType): Boolean {
         val markInstrumental = AppPreference.getMarkInstrumental(mContext)
         val sent = sendLyricResponse(
             context = mContext,
