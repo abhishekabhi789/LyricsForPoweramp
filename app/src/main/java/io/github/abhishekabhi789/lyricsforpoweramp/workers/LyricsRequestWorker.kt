@@ -16,6 +16,7 @@ import io.github.abhishekabhi789.lyricsforpoweramp.helpers.HttpClient
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.LrclibApiHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.NotificationHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.PowerampApiHelper.sendLyricResponse
+import io.github.abhishekabhi789.lyricsforpoweramp.helpers.StorageHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Lyrics
 import io.github.abhishekabhi789.lyricsforpoweramp.model.LyricsType
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Track
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import java.io.File
 
 class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -44,20 +46,23 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         mNotificationHelper = NotificationHelper(mContext)
         powerampTrackId = inputData.getLong(LyricsRequestReceiver.KEY_REAL_ID, PowerampAPI.NO_ID)
-        mTrack = Track(
-            trackName = inputData.getString(LyricsRequestReceiver.KEY_TRACK_NAME),
-            artistName = inputData.getString(LyricsRequestReceiver.KEY_ARTIST_NAME),
-            albumName = inputData.getString(LyricsRequestReceiver.KEY_ALBUM_NAME),
-            duration = inputData.getInt(LyricsRequestReceiver.KEY_DURATION, 0)
-                .let { if (it == 0) null else it },
-            realId = powerampTrackId
-        )
-        Log.i(TAG, "doWork: request for $mTrack")
-        return handleLyricsRequest()
+        inputData.getString(LyricsRequestReceiver.KEY_TRACK_NAME)?.let {
+            mTrack = Track(
+                trackName = it,
+                artistName = inputData.getString(LyricsRequestReceiver.KEY_ARTIST_NAME),
+                albumName = inputData.getString(LyricsRequestReceiver.KEY_ALBUM_NAME),
+                duration = inputData.getInt(LyricsRequestReceiver.KEY_DURATION, 0)
+                    .let { if (it == 0) null else it },
+                realId = powerampTrackId,
+                filePath = inputData.getString(LyricsRequestReceiver.KEY_FILE_PATH) ?: ""
+            )
+            Log.i(TAG, "doWork: request for $mTrack")
+            return handleLyricsRequest()
+        }
+        return Result.failure()
     }
 
     private suspend fun handleLyricsRequest(dispatcher: CoroutineDispatcher = Dispatchers.IO): Result {
-        notify(content = mContext.getString(R.string.preparing_search_track))
         Log.i(TAG, "handleLyricsRequest: request for $mTrack")
         val preferredLyricsType = AppPreference.getPreferredLyricsType(mContext)
         return withTimeoutOrNull(POWERAMP_LYRICS_REQUEST_WAIT_TIMEOUT) {
@@ -68,17 +73,13 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
                     lyricsType = preferredLyricsType,
                     dispatcher = dispatcher,
                     onSuccess = {
-                        notify(mContext.getString(R.string.sending_lyrics))
-                        sendLyrics(it, preferredLyricsType).also { success ->
-                            if (success) mNotificationHelper.cancelNotification()
-                            else suggestManualSearch()
-                            result = Result.success()
-                        }
+                        sendLyrics(it, preferredLyricsType)
+                        result = Result.success()
                     },
                     onError = { error ->
                         notify(mContext.getString(error.errMsg) + error.moreInfo?.let { " $it" })
                         Log.e(TAG, "handleLyricsRequest: $error")
-                        suggestManualSearch()
+                        notify(mContext.getString(R.string.notification_manual_search_suggestion))
                         result = Result.failure()
                     },
                 )
@@ -100,7 +101,6 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
     ) {
         val useFallbackMethod = AppPreference.getSearchIfGetFailed(mContext)
         Log.i(TAG, "getLyrics: fallback to search permitted- $useFallbackMethod")
-        notify(content = mContext.getString(R.string.performing_get_method))
         mLrclibApiHelper.getLyricsForTracks(
             track = track,
             dispatcher = dispatcher,
@@ -108,7 +108,6 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
             onError = { error ->
                 Log.e(TAG, "getLyrics: get request failed $error")
                 if (useFallbackMethod && error == LrclibApiHelper.Error.NO_RESULTS) {
-                    notify(mContext.getString(R.string.performing_search_method))
                     Log.i(TAG, "getLyrics: trying with search method")
                     CoroutineScope(dispatcher).launch {
                         mLrclibApiHelper.searchLyricsForTrack(
@@ -135,23 +134,31 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
         )
     }
 
-    private fun sendLyrics(lyrics: Lyrics?, lyricsType: LyricsType): Boolean {
+    private fun sendLyrics(lyrics: Lyrics?, lyricsType: LyricsType) {
         val markInstrumental = AppPreference.getMarkInstrumental(mContext)
-        val sent = sendLyricResponse(
+        val (sentToPoweramp, lyricsFileWritingResult) = sendLyricResponse(
             context = mContext,
-            realId = powerampTrackId,
+            filePath = mTrack.filePath,
+            powerampId = mTrack.realId,
             lyrics = lyrics,
             lyricsType = lyricsType,
             markInstrumental = markInstrumental
         )
-        val status = if (sent) R.string.sent else R.string.failed_to_send
-        notify("${mContext.getString(R.string.lyrics)} ${mContext.getString(status)}")
-        return sent
+        val path = mTrack.filePath.substringBeforeLast(File.separatorChar)
+        val notificationText = when (lyricsFileWritingResult) {
+            StorageHelper.Result.NO_PERMISSION -> mContext.getString(
+                R.string.notification_storage_missing_access_to_path, path
+            )
+
+            else -> null
+        }
+        notificationText?.let {
+            mNotificationHelper.makeStoragePermissionNotification(textContent = it, path = path)
+        }
+        if (sentToPoweramp && lyricsFileWritingResult == StorageHelper.Result.SUCCESS)
+            mNotificationHelper.cancelRequestNotification()
     }
 
-    private fun suggestManualSearch() {
-        notify(mContext.getString(R.string.notification_manual_search_suggestion))
-    }
 
     private fun notify(content: String) {
         val titleString = mContext.getString(R.string.request_handling_notification_title)
@@ -160,10 +167,10 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
                 "$titleString - ${mTrack.trackName}",
                 "${mContext.getString(R.string.track)}: ${mTrack.trackName}"
             )
-            mNotificationHelper.makeNotification(title, content, subText, mTrack)
+            mNotificationHelper.makeRequestNotification(title, content, subText, mTrack)
         } else {
             val (title, subText) = Pair(titleString, null)
-            mNotificationHelper.makeNotification(title, content, subText)
+            mNotificationHelper.makeRequestNotification(title, content, subText)
         }
     }
 

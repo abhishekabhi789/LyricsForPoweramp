@@ -82,6 +82,7 @@ fun AppSettings(
         ) {
             item { AppThemeSettings(viewmodel = viewmodel) }
             item { LyricsRequestSettings() }
+            item { LyricsStorageSettings(viewmodel = viewmodel) }
             item { FilterSettings() }
         }
     }

@@ -1,6 +1,7 @@
 package io.github.abhishekabhi789.lyricsforpoweramp.activities
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,25 +43,30 @@ class SearchResultActivity : ComponentActivity() {
         }
         val preferredTheme = AppPreference.getTheme(this)
         val realId: Long? = getSerializableExtra(intent, KEY_POWERAMP_REAL_ID)
+        val fileUri: String? = getSerializableExtra(intent, KEY_FILE_PATH)
 
         setContent {
             val scope = rememberCoroutineScope()
             val viewmodel: SearchResultViewmodel = viewModel()
-            searchResult?.let { viewmodel.setSearchResults(it) }
-            realId?.let { viewmodel.setPowerampId(it) }
+            LaunchedEffect(Unit) {
+                searchResult?.let { viewmodel.setSearchResults(it) }
+                realId?.let { viewmodel.setPowerampId(it) }
+                fileUri?.let { viewmodel.setFilePath(it) }
+            }
             val lyricsList by viewmodel.searchResults.collectAsState()
-            val powerampId: Long? = viewmodel.powerampId
+            val isLaunchedFromPoweramp = remember { realId != null }
             val useDarkTheme = AppPreference.isDarkTheme(theme = preferredTheme)
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
-                    lightScrim = android.graphics.Color.TRANSPARENT,
-                    darkScrim = android.graphics.Color.TRANSPARENT,
+                    lightScrim = Color.TRANSPARENT,
+                    darkScrim = Color.TRANSPARENT,
                 ) { useDarkTheme },
                 navigationBarStyle = SystemBarStyle.auto(
-                    lightScrim = android.graphics.Color.TRANSPARENT,
-                    darkScrim = android.graphics.Color.TRANSPARENT,
+                    lightScrim = Color.TRANSPARENT,
+                    darkScrim = Color.TRANSPARENT,
                 ) { useDarkTheme },
             )
+
             LyricsForPowerAmpTheme(useDarkTheme = useDarkTheme) {
                 val snackbarHostState = remember { SnackbarHostState() }
                 Surface(
@@ -69,7 +76,7 @@ class SearchResultActivity : ComponentActivity() {
                     ResultScreen(
                         result = lyricsList,
                         snackbarHostState = snackbarHostState,
-                        launchedFromPoweramp = powerampId != null,
+                        launchedFromPoweramp = isLaunchedFromPoweramp,
                         onLyricChosen = { lyrics, lyricsType ->
                             scope.launch {
                                 sendLyrics(
@@ -100,7 +107,12 @@ class SearchResultActivity : ComponentActivity() {
             val chosenLyricsType = lyricsType
                 ?: AppPreference.getPreferredLyricsType(this@SearchResultActivity)
             val sent =
-                viewmodel.sendLyricsToPoweramp(applicationContext, lyrics, chosenLyricsType)
+                viewmodel.sendLyricsToPoweramp(
+                    context = this@SearchResultActivity,
+                    lyrics = lyrics,
+                    lyricsType = chosenLyricsType,
+                    markInstrumental = AppPreference.getMarkInstrumental(this@SearchResultActivity)
+                )
             if (sent) {
                 Log.d(TAG, "sendLyrics: sent")
                 when (snackbarHostState.showSnackbar(
@@ -149,5 +161,6 @@ class SearchResultActivity : ComponentActivity() {
         private const val TAG = "SearchResultActivity"
         const val KEY_RESULT = "search_result"
         const val KEY_POWERAMP_REAL_ID = "poweramp_id"
+        const val KEY_FILE_PATH = "file_path"
     }
 }

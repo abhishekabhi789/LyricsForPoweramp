@@ -29,10 +29,11 @@ class LyricsRequestReceiver : BroadcastReceiver() {
                     val track = PowerampApiHelper.makeTrack(context, intent)
                     val workData = Data.Builder().run {
                         putLong(KEY_REAL_ID, realId)
-                        putString(KEY_TRACK_NAME, track.trackName)
-                        putString(KEY_ARTIST_NAME, track.artistName)
-                        putString(KEY_ALBUM_NAME, track.albumName)
-                        track.duration?.let { putInt(KEY_DURATION, it) }
+                        putString(KEY_TRACK_NAME, track?.trackName)
+                        putString(KEY_ARTIST_NAME, track?.artistName)
+                        putString(KEY_ALBUM_NAME, track?.albumName)
+                        putString(KEY_FILE_PATH, track?.filePath.toString())
+                        track?.duration?.let { putInt(KEY_DURATION, it) }
                         build()
                     }
                     val workRequest = OneTimeWorkRequestBuilder<LyricsRequestWorker>()
@@ -58,5 +59,6 @@ class LyricsRequestReceiver : BroadcastReceiver() {
         const val KEY_ARTIST_NAME = "artist_name"
         const val KEY_ALBUM_NAME = "album_name"
         const val KEY_DURATION = "duration"
+        const val KEY_FILE_PATH = "file_path"
     }
 }

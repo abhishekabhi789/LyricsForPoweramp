@@ -72,6 +72,7 @@ fun LyricsRequestSettings(modifier: Modifier = Modifier) {
         }
         if (showPermissionDialog) {
             PermissionDialog(
+                explanation = stringResource(R.string.settings_notification_permission_description),
                 onConfirm = {
                     askPermission = false
                     showPermissionDialog = false

@@ -73,8 +73,20 @@
     <string name="settings_overwrite_existing_notification_description">A new notification will replace the previous one.</string>
     <string name="settings_preferred_lyrics_type_label">Preferred Lyrics Type</string>
     <string name="settings_preferred_lyrics_type_description">Set a default preference for synced or plain lyrics.</string>
-    <string name="settings_mark_instrumental_tracks">Mark Instrumentals Songs</string>
+    <string name="settings_mark_instrumental_tracks">Mark Instrumental Songs</string>
     <string name="settings_mark_instrumental_tracks_description">Tag non-vocal tracks as instrumental. Poweramp will not ask again lyrics for these tracks.</string>
+    <string name="settings_lyrics_storage_label">Lyrics Storage Settings</string>
+    <string name="settings_send_to_poweramp_label">Send Lyrics to Poweramp</string>
+    <string name="settings_send_to_poweramp_description">Lyrics will be stored in Poweramp\'s cache, allowing updates directly from the Poweramp UI.</string>
+    <string name="settings_save_as_file_label">Save Lyrics as Files</string>
+    <string name="settings_save_as_file_description">Store lyrics as text files in the same folder as the music file. Ensure you select the correct folders below.</string>
+    <string name="settings_save_as_file_info">Select folders where your music files are stored to save lyrics in the same location.</string>
+    <string name="settings_save_as_file_folder_list_title">Selected Folders</string>
+    <string name="settings_save_as_file_choose_new_folder">Choose Folder</string>
+    <string name="settings_save_as_file_button_grant_access">Grant Access</string>
+    <string name="settings_save_as_file_button_remove_folder">Remove</string>
+    <string name="settings_save_as_file_no_folders">No folders selected</string>
+    <string name="settings_save_as_file_permission_explanation">"You need to grant permission to access %1$s to save lyrics files.</string>
     <string name="settings_filter_label">Filters</string>
     <string name="settings_filter_description">These words will be removed from respective fields while processing. Case insensitive. Supports regex.</string>
     <string name="settings_filter_title_label">Title Filter</string>
@@ -92,6 +104,8 @@
     <string name="failed_to_send">Failed to send</string>
     <string name="notification_manual_search_suggestion">Tap here to manually search</string>
     <string name="request_handling_notification_title">Handling Request</string>
+    <string name="notification_storage_access_needed_title">Need access to folder</string>
+    <string name="notification_storage_missing_access_to_path">Tap here grant access to %1$s.</string>
     <!--    Api Errors-->
     <string name="error_cancelled">Cancelled</string>
     <string name="error_empty_response">Empty Response</string>
@@ -102,4 +116,12 @@
     <string name="error_preparing_url">Failed to prepare request URL</string>
     <string name="error_no_results">No result found</string>
     <string name="error_processing_error">Error processing response</string>
+    <!--    lyrics file writing status messages-->
+    <string name="lyrics_write_success">File was saved successfully.</string>
+    <string name="lyrics_write_no_permission">No access to write on this folder</string>
+    <string name="lyrics_write_invalid_path">Failed to determine the file path.</string>
+    <string name="lyrics_write_invalid_lyrics">Failed to parse lyrics for saving.</string>
+    <string name="lyrics_write_unknown_error">An unknown error occurred while saving the file.</string>
+
+
 </resources>

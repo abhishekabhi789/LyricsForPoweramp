@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -83,7 +84,8 @@ class MainActivity : ComponentActivity() {
                 var showPermissionDialog by rememberSaveable { mutableStateOf(!permissionState.status.isGranted) }
                 if (shouldAskForNotificationPermission && showPermissionDialog) {
                     PermissionDialog(
-                        allowDisabling = true,
+                        explanation = stringResource(R.string.settings_notification_permission_description),
+                        allowToSuppress = true,
                         onConfirm = {
                             showPermissionDialog = false
                             if (permissionState.status.shouldShowRationale) {
@@ -115,15 +117,16 @@ class MainActivity : ComponentActivity() {
                 ) {
                     when (intent?.action) {
                         PowerampAPI.Lyrics.ACTION_LYRICS_LINK, MANUAL_SEARCH_ACTION -> {
-                            val requestedTrack = PowerampApiHelper.makeTrack(this, intent)
-                            viewModel.updateInputState(
-                                InputState(
-                                    queryString = requestedTrack.trackName ?: "",
-                                    queryTrack = requestedTrack,
-                                    searchMode = if (requestedTrack.artistName.isNullOrEmpty() && requestedTrack.albumName.isNullOrEmpty())
-                                        InputState.SearchMode.Coarse else InputState.SearchMode.Fine
+                            PowerampApiHelper.makeTrack(this, intent)?.let { track ->
+                                viewModel.updateInputState(
+                                    InputState(
+                                        queryString = track.trackName,
+                                        queryTrack = track,
+                                        searchMode = if (track.artistName.isNullOrEmpty() && track.albumName.isNullOrEmpty())
+                                            InputState.SearchMode.Coarse else InputState.SearchMode.Fine
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                     AppMain(viewModel = viewModel)

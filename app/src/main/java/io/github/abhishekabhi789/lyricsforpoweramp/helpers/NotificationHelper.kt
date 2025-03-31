@@ -12,23 +12,20 @@ import androidx.core.app.NotificationCompat
 import com.maxmpz.poweramp.player.PowerampAPI
 import io.github.abhishekabhi789.lyricsforpoweramp.R
 import io.github.abhishekabhi789.lyricsforpoweramp.activities.MainActivity
+import io.github.abhishekabhi789.lyricsforpoweramp.activities.SettingsActivity
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Track
 import io.github.abhishekabhi789.lyricsforpoweramp.utils.AppPreference
-import io.github.abhishekabhi789.lyricsforpoweramp.workers.LyricsRequestWorker.Companion.MANUAL_SEARCH_ACTION
+import io.github.abhishekabhi789.lyricsforpoweramp.workers.LyricsRequestWorker
 import java.util.UUID
 
 class NotificationHelper(private val context: Context) {
-    private val isNotificationEnabled = AppPreference.getShowNotification(context)
-    private var notificationId: Int = generateNotificationId(context)
-    private var channelName: String =
+    private val isReqNotificationEnabled = AppPreference.getShowNotification(context)
+    private var reqNotificationId: Int = generateRequestNotificationId(context)
+    private val reqNotificationChannelName: String =
         context.getString(R.string.lyrics_request_handling_notifications)
-
-    companion object {
-        private const val TAG = "NotificationHelper"
-        private const val CHANNEL_ID = "request_handling_notification"
-        private const val DEFAULT_NOTIFICATION_ID = 789
-    }
-
+    private val permissionNotificationId: Int = PERMISSION_NOTIFICATION_ID
+    private val permissionNotificationChannelName =
+        context.getString(R.string.notification_storage_access_needed_title)
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -38,28 +35,34 @@ class NotificationHelper(private val context: Context) {
     }
 
     private fun createNotificationChannel() {
-        if (!isNotificationEnabled) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                channelName,
+            val reqChannel = NotificationChannel(
+                REQ_CHANNEL_ID,
+                reqNotificationChannelName,
                 NotificationManager.IMPORTANCE_LOW
             )
-            notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(reqChannel)
+
+            val permissionChannel = NotificationChannel(
+                PERMISSION_CHANNEL_ID,
+                permissionNotificationChannelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(permissionChannel)
         }
     }
 
-    fun makeNotification(
+    fun makeRequestNotification(
         title: String,
         content: String,
         subText: String? = null,
         track: Track? = null
     ) {
-        if (!isNotificationEnabled) return
+        if (!isReqNotificationEnabled) return
         Log.d(TAG, "makeNotification: $content")
         val pendingIntent = if (track != null) {
             val intent = Intent(context, MainActivity::class.java).apply {
-                action = MANUAL_SEARCH_ACTION
+                action = LyricsRequestWorker.Companion.MANUAL_SEARCH_ACTION
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 putExtra(PowerampAPI.Track.REAL_ID, track.realId)
                 putExtra(PowerampAPI.Track.TITLE, track.trackName)
@@ -68,11 +71,13 @@ class NotificationHelper(private val context: Context) {
             }
 
             PendingIntent.getActivity(
-                context, notificationId, intent,
+                context,
+                reqNotificationId,
+                intent,
                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
             )
         } else null
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID).run {
+        val notification = NotificationCompat.Builder(context, REQ_CHANNEL_ID).run {
             setContentTitle(title)
             setContentText(content)
             setSmallIcon(R.drawable.app_icon)
@@ -82,17 +87,49 @@ class NotificationHelper(private val context: Context) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) setPriority(Notification.PRIORITY_LOW)
             build()
         }
-        notificationManager.notify(notificationId, notification)
+        notificationManager.notify(reqNotificationId, notification)
     }
 
-    fun cancelNotification() {
-        if (!isNotificationEnabled) return
-        Log.d(TAG, "cancelNotification: id- $notificationId")
-        notificationManager.cancel(notificationId)
+    fun cancelRequestNotification() {
+        if (!isReqNotificationEnabled) return
+        Log.d(TAG, "cancelNotification: id- $reqNotificationId")
+        notificationManager.cancel(reqNotificationId)
     }
 
-    private fun generateNotificationId(context: Context): Int {
+    private fun generateRequestNotificationId(context: Context): Int {
         val overwriteNotification = AppPreference.getOverwriteNotification(context)
-        return if (overwriteNotification) DEFAULT_NOTIFICATION_ID else UUID.randomUUID().hashCode()
+        return if (overwriteNotification) DEFAULT_REQ_NOTIFICATION_ID else UUID.randomUUID()
+            .hashCode()
+    }
+
+    fun makeStoragePermissionNotification(textContent: String, path: String? = null) {
+        val pendingIntent = Intent(context, SettingsActivity::class.java).apply {
+            action = SettingsActivity.Companion.OPEN_SETTINGS_ACTION
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            if (path != null) putExtra(SettingsActivity.EXTRA_REQUIRED_PATH, path)
+        }.run {
+            PendingIntent.getActivity(
+                context, permissionNotificationId, this,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+            )
+        }
+        val notification = NotificationCompat.Builder(context, REQ_CHANNEL_ID).run {
+            setContentTitle(context.getString(R.string.notification_storage_access_needed_title))
+            setContentText(textContent)
+            setSmallIcon(R.drawable.app_icon)
+            setAutoCancel(true)
+            if (pendingIntent != null) setContentIntent(pendingIntent)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) setPriority(Notification.PRIORITY_DEFAULT)
+            build()
+        }
+        notificationManager.notify(permissionNotificationId, notification)
+    }
+
+    companion object {
+        private const val TAG = "NotificationHelper"
+        private const val REQ_CHANNEL_ID = "request_handling_notification"
+        private const val PERMISSION_CHANNEL_ID = "permission_request_handling_notification"
+        private const val DEFAULT_REQ_NOTIFICATION_ID = 789
+        private const val PERMISSION_NOTIFICATION_ID = 123
     }
 }

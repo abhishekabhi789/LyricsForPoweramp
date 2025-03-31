@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,9 +23,10 @@ import io.github.abhishekabhi789.lyricsforpoweramp.R
 @Composable
 fun PermissionDialog(
     modifier: Modifier = Modifier,
-    allowDisabling: Boolean = false,
+    explanation: String,
+    allowToSuppress: Boolean = false,
     onConfirm: () -> Unit,
-    onDismiss: (disableNotification: Boolean) -> Unit
+    onDismiss: (suppress: Boolean) -> Unit
 ) {
     var disableNotification by rememberSaveable { mutableStateOf(false) }
     AlertDialog(
@@ -33,8 +35,8 @@ fun PermissionDialog(
         title = { Text(stringResource(R.string.settings_permission_dialog_title)) },
         text = {
             Column {
-                Text(stringResource(R.string.settings_notification_permission_description))
-                if (allowDisabling) {
+                Text(text = explanation, style = MaterialTheme.typography.bodyMedium)
+                if (allowToSuppress) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
                             checked = disableNotification,

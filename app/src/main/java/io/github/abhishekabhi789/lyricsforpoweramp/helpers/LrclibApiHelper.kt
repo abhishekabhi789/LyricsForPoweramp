@@ -120,7 +120,8 @@ class LrclibApiHelper(private val client: OkHttpClient) {
         } catch (e: IllegalStateException) {
             //when the call has already been executed.
             Log.e(TAG, "IllegalArgumentException, may be the call has already been executed", e)
-            onComplete(ApiResult.Failure(
+            onComplete(
+                ApiResult.Failure(
                 Error.NETWORK_ERROR.apply { moreInfo = e.localizedMessage }
             ))
         } catch (e: SocketTimeoutException) {
@@ -141,12 +142,12 @@ class LrclibApiHelper(private val client: OkHttpClient) {
         onResult: (Lyrics) -> Unit,
         onError: (Error) -> Unit
     ) {
-        if (track.trackName.isNullOrEmpty()) {
+        if (track.trackName.isEmpty()) {
             onError(Error.NO_TRACK_NAME)
             return
         }
         val requestParams = listOfNotNull(
-            "track_name=${encode(track.trackName!!)}",
+            "track_name=${encode(track.trackName)}",
             track.artistName?.let { "artist_name=${encode(it)}" },
             track.albumName?.let { "album_name=${encode(it)}" },
             track.duration?.takeIf { it > 0 }?.let { "duration=$it" }
@@ -181,12 +182,12 @@ class LrclibApiHelper(private val client: OkHttpClient) {
             is String -> "search?q=${encode(query)}"
 
             is Track -> {
-                if (query.trackName.isNullOrEmpty()) {
+                if (query.trackName.isEmpty()) {
                     onError(Error.NO_TRACK_NAME)
                     return
                 }
                 listOfNotNull(
-                    "track_name=${encode(query.trackName!!)}",
+                    "track_name=${encode(query.trackName)}",
                     query.artistName?.let { "artist_name=${encode(it)}" },
                     query.albumName?.let { "album_name=${encode(it)}" }
                 ).joinToString(separator = "&", prefix = "search?")

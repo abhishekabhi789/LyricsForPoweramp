@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,6 +26,13 @@ class SettingsActivity : ComponentActivity() {
             val viewmodel: SettingsViewModel = viewModel()
             val preferredTheme by viewmodel.themeState.collectAsState()
             val useDarkTheme = AppPreference.isDarkTheme(theme = preferredTheme)
+            LaunchedEffect(Unit) {
+                when (intent?.action) {
+                    OPEN_SETTINGS_ACTION -> {
+                        viewmodel.setAccessRequestedPath(intent.getStringExtra(EXTRA_REQUIRED_PATH))
+                    }
+                }
+            }
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
                     lightScrim = android.graphics.Color.TRANSPARENT,
@@ -44,5 +52,12 @@ class SettingsActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        const val TAG = "SettingsActivity"
+        const val OPEN_SETTINGS_ACTION =
+            "io.github.abhishekabhi789.lyricsforpoweramp.FOLDER_ACCESS_NEEDED"
+        const val EXTRA_REQUIRED_PATH = "need_permissison_for_this_path"
     }
 }

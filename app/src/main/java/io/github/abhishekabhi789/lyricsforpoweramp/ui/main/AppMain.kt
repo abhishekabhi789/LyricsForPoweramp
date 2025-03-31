@@ -66,6 +66,10 @@ fun AppMain(modifier: Modifier = Modifier, viewModel: MainActivityViewModel) {
                     SearchResultActivity.KEY_POWERAMP_REAL_ID,
                     viewModel.inputState.value.queryTrack.realId
                 )
+                putExtra(
+                    SearchResultActivity.KEY_FILE_PATH,
+                    viewModel.inputState.value.queryTrack.filePath
+                )
             }
             context.startActivity(intent)
         }
