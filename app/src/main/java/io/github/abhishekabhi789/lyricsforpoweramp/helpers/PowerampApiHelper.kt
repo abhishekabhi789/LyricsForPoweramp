@@ -145,7 +145,7 @@ object PowerampApiHelper {
                 StorageHelper.Result.INVALID_LYRICS
             }
         } else StorageHelper.Result.SUCCESS //not attempted
-        return Pair((sendToPoweramp && sentToPoweramp), result)
+        return Pair(sentToPoweramp, result)
     }
 
     private fun makeInfoLine(context: Context, lyrics: Lyrics?): String {

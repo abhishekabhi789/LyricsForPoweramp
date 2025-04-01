@@ -2,7 +2,6 @@ package io.github.abhishekabhi789.lyricsforpoweramp.model
 
 import androidx.annotation.StringRes
 import io.github.abhishekabhi789.lyricsforpoweramp.R
-import io.github.abhishekabhi789.lyricsforpoweramp.model.InputState.SearchMode
 
 /**Stores user inputs*/
 data class InputState(

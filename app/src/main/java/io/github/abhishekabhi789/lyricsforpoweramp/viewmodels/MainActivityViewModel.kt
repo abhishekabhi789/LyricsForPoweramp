@@ -69,8 +69,8 @@ class MainActivityViewModel : ViewModel() {
     /** Ensures user inputs are suffice to perform search */
     private fun isValidInput(): Boolean {
         return when (_inputState.value.searchMode) {
-            InputState.SearchMode.Coarse -> _inputState.value.queryString.isNotEmpty()
-            InputState.SearchMode.Fine -> !inputState.value.queryTrack.trackName.isNullOrEmpty()
+            InputState.SearchMode.Coarse -> _inputState.value.queryString.isNotBlank()
+            InputState.SearchMode.Fine -> inputState.value.queryTrack.trackName.isNotBlank()
         }
     }
 

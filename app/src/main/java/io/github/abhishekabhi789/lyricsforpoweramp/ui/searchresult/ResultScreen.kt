@@ -1,5 +1,6 @@
 package io.github.abhishekabhi789.lyricsforpoweramp.ui.searchresult
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -20,24 +21,39 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.abhishekabhi789.lyricsforpoweramp.R
-import io.github.abhishekabhi789.lyricsforpoweramp.model.Lyrics
-import io.github.abhishekabhi789.lyricsforpoweramp.model.LyricsType
+import io.github.abhishekabhi789.lyricsforpoweramp.activities.SettingsActivity
+import io.github.abhishekabhi789.lyricsforpoweramp.viewmodels.SearchResultViewmodel
+import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
     modifier: Modifier = Modifier,
-    result: List<Lyrics>,
-    snackbarHostState: SnackbarHostState,
-    launchedFromPoweramp: Boolean = false,
-    onLyricChosen: (Lyrics, lyricsType: LyricsType) -> Unit,
-    onBack: () -> Unit,
+    viewmodel: SearchResultViewmodel,
+    onFinish: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val result by viewmodel.searchResults.collectAsState()
+    val isLaunchedFromPoweramp by remember { derivedStateOf { viewmodel.powerampId != null } }
+    val sendToPowerampState by viewmodel.sendToPowerampState.collectAsState()
+    val saveToStorageState by viewmodel.saveToStorageState.collectAsState()
+    val showBottomSheet by remember {
+        derivedStateOf { sendToPowerampState != null && saveToStorageState != null }
+    }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -51,7 +67,7 @@ fun ResultScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = onFinish) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.navigate_back_action),
@@ -76,10 +92,32 @@ fun ResultScreen(
             items(items = result) { lyrics ->
                 LyricItem(
                     lyrics = lyrics,
-                    isLaunchedFromPowerAmp = launchedFromPoweramp,
-                    onLyricChosen = onLyricChosen,
+                    isLaunchedFromPowerAmp = isLaunchedFromPoweramp,
+                    onLyricChosen = { lyrics, lyricsType ->
+                        scope.launch {
+                            viewmodel.sendLyricsToPoweramp(
+                                context = context, lyrics = lyrics,
+                                lyricsType = lyricsType, onComplete = onFinish
+                            )
+                        }
+                    }
                 )
             }
+        }
+        if (showBottomSheet) {
+            ResultBottomSheet(
+                sendToPowerampState,
+                saveToStorageState,
+                onDismiss = { viewmodel.clearResultState() },
+                grantAccess = {
+                    viewmodel.clearResultState()
+                    val path = viewmodel.filePath.substringBeforeLast(File.separatorChar)
+                    Intent(context, SettingsActivity::class.java).apply {
+                        setAction(SettingsActivity.Companion.OPEN_SETTINGS_ACTION)
+                        putExtra(SettingsActivity.EXTRA_REQUIRED_PATH, path)
+                    }.let { context.startActivity(it) }
+                }
+            )
         }
     }
 }

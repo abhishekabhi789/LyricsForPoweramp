@@ -313,7 +313,7 @@ fun SendLyricsButton(
                     )
                     Icon(
                         imageVector = Icons.Default.let { if (expanded) it.ArrowDropUp else it.ArrowDropDown },
-                        contentDescription = stringResource(R.string.result_change_type_button_label),
+                        contentDescription = stringResource(R.string.change_preferred_lyrics_type),
                         modifier = Modifier.size(32.dp)
                     )
                 }

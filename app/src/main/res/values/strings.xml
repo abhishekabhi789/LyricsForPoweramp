@@ -1,18 +1,17 @@
 <resources>
     <string name="app_name">Lyrics for Poweramp</string>
     <!--    general-->
-    <string name="error">Error occurred</string>
     <string name="plain_lyrics">Plain Lyrics</string>
     <string name="synced_lyrics">Synced Lyrics</string>
     <string name="plain_lyrics_short">Plain</string>
     <string name="synced_lyrics_short">Synced</string>
-    <string name="lyrics">Lyrics</string>
     <string name="track">Track</string>
     <string name="navigate_back_action">Go Back</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
+    <string name="done">Done</string>
     <string name="response_footer_text">Powered by Lyrics for PowerAmp</string>
     <string name="toast_failed_to_browse_link">Unable to open link</string>
     <!--    top bar-->
@@ -30,15 +29,13 @@
     <!--    lyrics result-->
     <string name="result_topbar_title">Results</string>
     <string name="send_lyrics_button">Send this lyrics</string>
-    <string name="change_preferred_lyrics_type">change preferred lyrics type</string>
-    <string name="sending_lyrics">Sending lyrics to PowerAmp</string>
-    <string name="snackbar_failed_to_send_lyrics">Failed to send lyrics</string>
-    <string name="snackbar_retry_sending_lyrics">Retry</string>
-    <string name="snackbar_lyrics_sent_successfully">Lyrics Sent</string>
+    <string name="change_preferred_lyrics_type">Change lyrics type</string>
+    <string name="sending_lyrics">Sending lyrics result</string>
+    <string name="lyrics_sent_successfully">Lyrics Sent</string>
+    <string name="lyrics_save_to_storage">Save lyrics to storage</string>
     <string name="result_change_type_button_label">Change lyrics type</string>
     <string name="result_type_synced_description">Synced lyrics of this track</string>
     <string name="result_type_plain_description">Plain lyrics of this track</string>
-    <string name="mark_this_track_instrumental">Mark Instrumental</string>
     <!--    about activity-->
     <string name="about">About</string>
     <string name="version">Version</string>
@@ -96,12 +93,7 @@
     <string name="input_clear_confirmation_message">Are you sure you want to clear the %1$s</string>
     <!--    notifications-->
     <string name="lyrics_request_handling_notifications">Lyrics Request Handling Notifications</string>
-    <string name="preparing_search_track">Preparing search track</string>
-    <string name="performing_get_method">Getting lyrics</string>
     <string name="timeout_cancelled">Timeout cancelled</string>
-    <string name="performing_search_method">Searching for lyrics</string>
-    <string name="sent">Sent</string>
-    <string name="failed_to_send">Failed to send</string>
     <string name="notification_manual_search_suggestion">Tap here to manually search</string>
     <string name="request_handling_notification_title">Handling Request</string>
     <string name="notification_storage_access_needed_title">Need access to folder</string>
