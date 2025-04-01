@@ -44,6 +44,48 @@ Poweramp automatically sends a lyrics request when it doesn't have lyrics availa
           This option will set dummy lyrics for instrumental tracks, preventing the lyrics request
           from appearing.
 
+    - #### Lyrics Storage Settings
+       
+       - #### Send Lyrics to Poweramp
+          [Recommended to keep enabled always]
+
+          The result will be sent to Poweramp and cached in Poweramp's internal memory.
+          Advantages:
+            * The lyrics will immediately appear in the Poweramp UI.
+            * You can update lyrics directly from the Poweramp UI by launching the plugin using the ( :fast_forward: ) button.
+          Disadvantages: 
+            * Poweramp won't include these lyrics in its backup.
+            * Poweramp gives lower priority to lyrics from the plugin and prefers lyrics from tags or files.
+        
+        - #### Save Lyrics as Files
+           The lyrics will be stored in the same location as the music files.
+
+          Advantages:
+            * Lyrics will be preserved even if you perform a **Full Rescan** or **Reinstall Poweramp**
+            * The lyrics may appear in other music players if they support displaying lyrics from files.
+          Disadvangaes:
+            * here may be a delay in loading lyrics into the Poweramp UI. Sometimes, Poweramp requires a rescan or restart.
+            * You can't easily change lyrics from the Poweramp UI.
+          
+          Tips for Selecting Folders:
+          * When choosing a music folder, instead of selecting individual subfolders, try to select their parent folder.
+          * You cannot select root directories due to Android restrictions.
+
+          #### Updating Lyrics Files on Github Version:
+            1. Delete the existing lyrics file from storage.
+            2. Play the track again in Poweramp with:
+                  - [Send to Poweramp](#send-lyrics-to-poweramp) enabled
+                  - [Save Lyrics as Files](#save-lyrics-as-files) disabled
+            This will allow you to launch the plugin from Poweramp UI again.
+            3. Before proceeding to search:
+                  - Enable [Save Lyrics as Files](#save-lyrics-as-files)
+                  - Disable [Send to Poweramp](#send-lyrics-to-poweramp) (if you don’t need it)
+            4. Go back to the plugin’s main screen and start a new search.
+            5. From the search results, carefully select the lyrics you want.
+             
+          #### Updating Lyrics Files on PlayStore Version:
+          The Play Store version includes a Library Screen, allowing you to change lyrics anytime without changing playback or launching Poweramp.
+
     - #### Filters
       You can specify filters for the title, artist, and album fields to remove matches from the
       corresponding search parameter.
@@ -66,17 +108,9 @@ Poweramp automatically sends a lyrics request when it doesn't have lyrics availa
 
 - Lyrics sent to Poweramp by this plugin are cached by Poweramp and will be available offline.
 - Poweramp makes a request only when the track doesn't have any lyrics to display.
-- When Poweramp initiates a lyrics request, you'll see the message “Searching lyrics via plugin” in
-  the Poweramp lyrics UI.
-- For every lyrics request received, the plugin will try to get the best match available.
-  If this fails and the fallback method is enabled, it performs a fine search operation and selects
-  the first result, if available.
-- To update lyrics set by this plugin, play the track in Poweramp and open the Lyrics UI.
-  At the top, you'll find an icon button(:fast_forward:) next to the plugin name.
-  Tap on it to launch the plugin and perform a search to retrieve available lyrics.
-  Each lyrics result contains a choose icon(:heavy_check_mark:), upon clicking on it will send the
-  lyrics to poweramp.
-- To reset/delete all lyrics set by this plugin, perform a full rescan
-  `Poweramp Settings → Library → Full Rescan`
+- When Poweramp initiates a lyrics request, you'll see the message “Searching lyrics via plugin” in the Poweramp lyrics UI.
+- For every lyrics request received, the plugin will try to get the best match available. If this fails and the fallback method is enabled, it performs a fine search operation and selects the suitable result, if available.
+- To update lyrics set by this plugin in Poweramp, play the track in Poweramp and open the Lyrics UI. At the top, you'll find an icon button( :fast_forward: ) next to the plugin name. Tap on it to launch the plugin and perform a search to retrieve available lyrics. Each lyrics result contains a choose icon ( :heavy_check_mark: ), upon clicking on it will send the lyrics to poweramp.
+- To reset/delete all lyrics set by this plugin in Poweramp, perform a full rescan `Poweramp Settings → Library → Full Rescan`
 
 Need any help? You can contact me [here](https://abhishekabhi789.github.io/#contact)

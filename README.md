@@ -26,12 +26,11 @@ A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 | GitHub                                                                                                                                                                            | Play Store                                                                                                                                                                                                                                                            |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ![Latest Version](https://img.shields.io/github/v/release/abhishekabhi789/LyricsForPoweramp?style=for-the-badge&logo=github&color=black&label=Version)                            | ![Latest Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DLatest%26m%3D%24version&style=for-the-badge&logo=google-play&label=Release&color=yellow) |
-| ![Release Date](https://img.shields.io/github/release-date/abhishekabhi789/LyricsForPoweramp?display_date=published_at&style=for-the-badge&logo=github&color=black&label=Updated) | ![Release Date](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DUpdated%26m%3D%24published&style=for-the-badge&logo=google-play&color=yellow)              |
+| ![Release Date](https://img.shields.io/github/release-date/abhishekabhi789/LyricsForPoweramp?display_date=published_at&style=for-the-badge&logo=github&color=black&label=Updated) | ![Release Date](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dio.github.abhishekabhi789.lyricsforpoweramp%26gl%3DUS%26hl%3Den%26l%3DUpdated%26m%3D%24updated&style=for-the-badge&logo=google-play&color=yellow)              |
 | [Goto Latest Release](https://github.com/abhishekabhi789/LyricsForPowerAmp/releases)                                                                                              | [View on Play Store](https://play.google.com/store/apps/details?id=io.github.abhishekabhi789.lyricsforpoweramp&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Ddownload_table)                                                                    |
 
 > [!NOTE]  
-> The Google Play version contains extra features including premium features that require purchase.
-> Basic functionalities are free, same as the GitHub version.
+> The Google Play version contains extra features, including a free library UI that allows you to browse and manage lyrics collection seamlessly. Premium features include a batch downloader for fetching multiple lyrics at once, saving time and effort for users with extensive music libraries.
 
 > [!IMPORTANT]
 > Play Store builds are signed by Google hence you can't update GitHub Variant from Play Store.
@@ -44,6 +43,7 @@ A lyrics plugin for <a href="https://powerampapp.com/">Poweramp</a><br>
 
 - **Internet**: Required for fetching lyrics from LRCLib.
 - **Notification**: Displays status of lyrics requests.
+- **Storage**: To Store lyrics in Files.
 
 ### :wrench: Setup and Usage
 
