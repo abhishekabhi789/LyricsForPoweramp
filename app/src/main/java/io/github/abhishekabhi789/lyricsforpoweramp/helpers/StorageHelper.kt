@@ -9,6 +9,8 @@ import androidx.documentfile.provider.DocumentFile
 import io.github.abhishekabhi789.lyricsforpoweramp.R
 import io.github.abhishekabhi789.lyricsforpoweramp.model.LyricsType
 import io.github.abhishekabhi789.lyricsforpoweramp.utils.AppPreference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -19,18 +21,18 @@ object StorageHelper {
     private const val EXTENSION_LRC = ".lrc"
     private const val EXTENSION_TXT = ".txt"
 
-    fun writeLyricsFile(
+    suspend fun writeLyricsFile(
         context: Context,
         filePath: String,
         lyricsContent: String,
         lyricsType: LyricsType,
-    ): Result {
+    ): Result = withContext(Dispatchers.IO) {
         Log.d(TAG, "writeLyricsFile: track file path $filePath")
-        if (filePath.isBlank()) return Result.INVALID_FILEPATH
+        if (filePath.isBlank()) return@withContext Result.INVALID_FILEPATH
         val trackParentDir = filePath.substringBeforeLast(File.separator)
         if (lyricsContent.isBlank()) {
             Log.e(TAG, "writeLyricsFile: aborting lyrics write due to null lyrics")
-            return Result.INVALID_LYRICS
+            return@withContext Result.INVALID_LYRICS
         }
         val (mimeType, extension) = if (lyricsType == LyricsType.SYNCED)
             SYNCED_LYRICS_MIMETYPE to EXTENSION_LRC else PLAIN_LYRICS_MIMETYPE to EXTENSION_TXT
@@ -42,28 +44,29 @@ object StorageHelper {
         val processedPath = processPath(trackParentDir, savedUris)
         if (processedPath == null) {
             Log.e(TAG, "writeLyricsFile: required folder not found in saved path")
-            return Result.NO_PERMISSION
+            return@withContext Result.NO_PERMISSION
         }
         val (folderUri, extraPath) = processedPath
         var parentFolder =
-            DocumentFile.fromTreeUri(context, folderUri) ?: return Result.INVALID_FILEPATH
+            DocumentFile.fromTreeUri(context, folderUri)
+                ?: return@withContext Result.INVALID_FILEPATH
 
         if (extraPath.isNotEmpty()) {
             //navigate to the child folder where the track is located
             for (segment in extraPath) {
                 val childFolder = parentFolder.findFile(segment)
                     ?: parentFolder.createDirectory(segment)
-                    ?: return Result.INVALID_FILEPATH
+                    ?: return@withContext Result.INVALID_FILEPATH
                 parentFolder = childFolder
             }
         }
 
         if (!parentFolder.isDirectory) {
             Log.e(TAG, "writeLyricsFile: Failed to create or access child folder")
-            return Result.INVALID_FILEPATH
+            return@withContext Result.INVALID_FILEPATH
         }
 
-        return try {
+        return@withContext try {
             parentFolder.findFile(fileName)?.let {
                 //to overwrite the existing lyrics file
                 if (!it.delete()) {
@@ -73,7 +76,7 @@ object StorageHelper {
             val file = parentFolder.createFile(mimeType, fileName)
             if (file == null) {
                 Log.e(TAG, "writeLyricsFile: Failed to create file $fileName")
-                return Result.INVALID_FILEPATH
+                return@withContext Result.INVALID_FILEPATH
             }
 
             context.contentResolver.openOutputStream(file.uri)?.use { outputStream ->

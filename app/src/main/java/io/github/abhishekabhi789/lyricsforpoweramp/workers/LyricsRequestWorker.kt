@@ -12,6 +12,7 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.maxmpz.poweramp.player.PowerampAPI
 import io.github.abhishekabhi789.lyricsforpoweramp.R
+import io.github.abhishekabhi789.lyricsforpoweramp.activities.SettingsActivity
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.HttpClient
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.LrclibApiHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.NotificationHelper
@@ -23,9 +24,9 @@ import io.github.abhishekabhi789.lyricsforpoweramp.model.Track
 import io.github.abhishekabhi789.lyricsforpoweramp.receivers.LyricsRequestReceiver
 import io.github.abhishekabhi789.lyricsforpoweramp.utils.AppPreference
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 
@@ -64,26 +65,35 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
 
     private suspend fun handleLyricsRequest(dispatcher: CoroutineDispatcher = Dispatchers.IO): Result {
         Log.i(TAG, "handleLyricsRequest: request for $mTrack")
+        val sendToPoweramp = AppPreference.getSendLyricsToPoweramp(mContext)
+        val saveToStorage = AppPreference.getSendLyricsToPoweramp(mContext)
+        if (!sendToPoweramp && !saveToStorage) {
+            Log.e(TAG, "sendLyrics: both saving options are disabled")
+            mNotificationHelper.launchSettings(
+                title = mContext.getString(R.string.notification_no_saving_method_title),
+                text = mContext.getString(R.string.notification_no_saving_method_description)
+            )
+            return Result.failure()
+        }
         val preferredLyricsType = AppPreference.getPreferredLyricsType(mContext)
+        var result: Result = Result.failure() // Store the result here
+
         return withTimeoutOrNull(POWERAMP_LYRICS_REQUEST_WAIT_TIMEOUT) {
-            var result: Result = Result.failure()
-            CoroutineScope(dispatcher).launch {
-                getLyrics(
-                    track = mTrack,
-                    lyricsType = preferredLyricsType,
-                    dispatcher = dispatcher,
-                    onSuccess = {
-                        sendLyrics(it, preferredLyricsType)
-                        result = Result.success()
-                    },
-                    onError = { error ->
-                        notify(mContext.getString(error.errMsg) + error.moreInfo?.let { " $it" })
-                        Log.e(TAG, "handleLyricsRequest: $error")
-                        notify(mContext.getString(R.string.notification_manual_search_suggestion))
-                        result = Result.failure()
-                    },
-                )
-            }.join()
+            getLyrics(
+                track = mTrack,
+                lyricsType = preferredLyricsType,
+                dispatcher = dispatcher,
+                onSuccess = { lyrics ->
+                    result = Result.success()
+                    launch { sendLyrics(lyrics, preferredLyricsType) }
+                },
+                onError = { error ->
+                    notify(mContext.getString(error.errMsg) + error.moreInfo?.let { " $it" })
+                    Log.e(TAG, "handleLyricsRequest: $error")
+                    notify(mContext.getString(R.string.notification_manual_search_suggestion))
+                    result = Result.failure()
+                },
+            )
             result
         } ?: run {
             notify(mContext.getString(R.string.timeout_cancelled))
@@ -98,7 +108,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
         dispatcher: CoroutineDispatcher,
         onSuccess: (Lyrics) -> Unit,
         onError: (LrclibApiHelper.Error) -> Unit
-    ) {
+    ) = withContext(dispatcher) {
         val useFallbackMethod = AppPreference.getSearchIfGetFailed(mContext)
         Log.i(TAG, "getLyrics: fallback to search permitted- $useFallbackMethod")
         mLrclibApiHelper.getLyricsForTracks(
@@ -109,7 +119,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
                 Log.e(TAG, "getLyrics: get request failed $error")
                 if (useFallbackMethod && error == LrclibApiHelper.Error.NO_RESULTS) {
                     Log.i(TAG, "getLyrics: trying with search method")
-                    CoroutineScope(dispatcher).launch {
+                    launch {
                         mLrclibApiHelper.searchLyricsForTrack(
                             query = track,
                             dispatcher = dispatcher,
@@ -134,7 +144,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
         )
     }
 
-    private fun sendLyrics(lyrics: Lyrics?, lyricsType: LyricsType) {
+    private suspend fun sendLyrics(lyrics: Lyrics?, lyricsType: LyricsType) {
         val markInstrumental = AppPreference.getMarkInstrumental(mContext)
         val (sentToPoweramp, lyricsFileWritingResult) = sendLyricResponse(
             context = mContext,
@@ -153,7 +163,11 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
             else -> null
         }
         notificationText?.let {
-            mNotificationHelper.makeStoragePermissionNotification(textContent = it, path = path)
+            mNotificationHelper.launchSettings(
+                title = mContext.getString(R.string.notification_storage_access_needed_title),
+                text = it,
+                extras = mapOf(SettingsActivity.EXTRA_REQUIRED_PATH to path)
+            )
         }
         if (sentToPoweramp && lyricsFileWritingResult == StorageHelper.Result.SUCCESS)
             mNotificationHelper.cancelRequestNotification()

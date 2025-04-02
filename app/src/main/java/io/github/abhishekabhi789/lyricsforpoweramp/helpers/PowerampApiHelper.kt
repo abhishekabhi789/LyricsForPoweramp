@@ -89,7 +89,7 @@ object PowerampApiHelper {
      * @return [Pair]<Boolean, StorageHelper.Result> where [Boolean] represents success status for sending to Poweramp.
      * and [StorageHelper.Result] represents success status for saving to storage.
      */
-    fun sendLyricResponse(
+    suspend fun sendLyricResponse(
         context: Context,
         filePath: String,
         powerampId: Long?,

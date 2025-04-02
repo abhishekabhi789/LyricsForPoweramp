@@ -102,11 +102,11 @@ class NotificationHelper(private val context: Context) {
             .hashCode()
     }
 
-    fun makeStoragePermissionNotification(textContent: String, path: String? = null) {
+    fun launchSettings(title: String, text: String, extras: Map<String, String>? = null) {
         val pendingIntent = Intent(context, SettingsActivity::class.java).apply {
             action = SettingsActivity.Companion.OPEN_SETTINGS_ACTION
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            if (path != null) putExtra(SettingsActivity.EXTRA_REQUIRED_PATH, path)
+            extras?.let { extras.forEach { extra -> putExtra(extra.key, extra.value) } }
         }.run {
             PendingIntent.getActivity(
                 context, permissionNotificationId, this,
@@ -114,8 +114,8 @@ class NotificationHelper(private val context: Context) {
             )
         }
         val notification = NotificationCompat.Builder(context, REQ_CHANNEL_ID).run {
-            setContentTitle(context.getString(R.string.notification_storage_access_needed_title))
-            setContentText(textContent)
+            setContentTitle(title)
+            setContentText(text)
             setSmallIcon(R.drawable.app_icon)
             setAutoCancel(true)
             if (pendingIntent != null) setContentIntent(pendingIntent)

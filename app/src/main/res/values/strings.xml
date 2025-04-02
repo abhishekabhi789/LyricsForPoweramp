@@ -98,6 +98,8 @@
     <string name="request_handling_notification_title">Handling Request</string>
     <string name="notification_storage_access_needed_title">Need access to folder</string>
     <string name="notification_storage_missing_access_to_path">Tap here grant access to %1$s.</string>
+    <string name="notification_no_saving_method_title">Lyrics saving is disabled</string>
+    <string name="notification_no_saving_method_description">Enable at least one lyrics saving method</string>
     <!--    Api Errors-->
     <string name="error_cancelled">Cancelled</string>
     <string name="error_empty_response">Empty Response</string>
