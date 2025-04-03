@@ -54,6 +54,7 @@ import io.github.abhishekabhi789.lyricsforpoweramp.R
 import io.github.abhishekabhi789.lyricsforpoweramp.model.InputState.SearchMode
 import io.github.abhishekabhi789.lyricsforpoweramp.ui.components.TextInput
 import io.github.abhishekabhi789.lyricsforpoweramp.viewmodels.MainActivityViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,10 +73,13 @@ fun SearchUi(modifier: Modifier = Modifier, viewModel: MainActivityViewModel) {
         initialPage = tabs.indexOf(inputState.searchMode)
     )
     val pageScrollOffset by remember { derivedStateOf { pagerState.currentPageOffsetFraction } }
-    LaunchedEffect(isInputValid) {
-        if (!isInputValid) {
-            focusRequester.requestFocus()
-            keyboardController?.show()
+    LaunchedEffect(Unit) {
+        //to prevent calling requestFocus() before initializing textboxes
+        viewModel.isInputValid.collectLatest { isInputValid ->
+            if (!isInputValid) {
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }
         }
     }
     LaunchedEffect(pagerState.currentPage) {

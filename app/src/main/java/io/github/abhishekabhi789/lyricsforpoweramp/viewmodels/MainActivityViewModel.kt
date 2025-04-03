@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -58,12 +57,12 @@ class MainActivityViewModel : ViewModel() {
 
     /** Updates app theme */
     fun updateTheme(theme: AppPreference.AppTheme) {
-        _appTheme.update { theme }
+        _appTheme.value = theme
     }
 
     /** Updates [inputState]*/
     fun updateInputState(newState: InputState) {
-        _inputState.update { newState }
+        _inputState.value = newState
     }
 
     /** Ensures user inputs are suffice to perform search */
@@ -125,7 +124,7 @@ class MainActivityViewModel : ViewModel() {
     }
 
     private fun emitSearchStatus(isSearching: Boolean) {
-        _isSearching.update { isSearching }
+        _isSearching.value = isSearching
     }
 
     private fun emitSearchError(error: LrclibApiHelper.Error) {
@@ -140,7 +139,8 @@ class MainActivityViewModel : ViewModel() {
     }
 
     private fun updateInputValidStatus(isInputValid: Boolean) {
-        _isInputValid.update { isInputValid }
+        Log.d(TAG, "updateInputValidStatus: updating validity $isInputValid")
+        _isInputValid.value = isInputValid
     }
 
     /** Call this when after updating the mandatory fields to clear the error*/
