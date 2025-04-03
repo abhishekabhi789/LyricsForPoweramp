@@ -66,7 +66,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
     private suspend fun handleLyricsRequest(dispatcher: CoroutineDispatcher = Dispatchers.IO): Result {
         Log.i(TAG, "handleLyricsRequest: request for $mTrack")
         val sendToPoweramp = AppPreference.getSendLyricsToPoweramp(mContext)
-        val saveToStorage = AppPreference.getSendLyricsToPoweramp(mContext)
+        val saveToStorage = AppPreference.getSaveAsFile(mContext)
         if (!sendToPoweramp && !saveToStorage) {
             Log.e(TAG, "sendLyrics: both saving options are disabled")
             mNotificationHelper.launchSettings(
