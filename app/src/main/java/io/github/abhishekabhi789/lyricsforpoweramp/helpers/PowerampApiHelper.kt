@@ -93,22 +93,22 @@ object PowerampApiHelper {
         context: Context,
         filePath: String,
         powerampId: Long?,
-        lyrics: Lyrics?,
+        lyrics: Lyrics,
         lyricsType: LyricsType,
         markInstrumental: Boolean = false
     ): Pair<Boolean, StorageHelper.Result> {
         val sendToPoweramp = AppPreference.getSendLyricsToPoweramp(context)
         val saveToFile = AppPreference.getSaveAsFile(context)
-        val lyricsContent = when (lyricsType) {
-            LyricsType.PLAIN -> (lyrics?.plainLyrics ?: lyrics?.syncedLyrics)!!
-            LyricsType.SYNCED -> (lyrics?.syncedLyrics ?: lyrics?.plainLyrics)!!
+        val lyricsText = when (lyricsType) {
+            LyricsType.PLAIN -> (lyrics.plainLyrics ?: lyrics.syncedLyrics)!!
+            LyricsType.SYNCED -> (lyrics.syncedLyrics ?: lyrics.plainLyrics)!!
             LyricsType.INSTRUMENTAL -> if (markInstrumental) INSTRUMENTAL_MARKING else null
         }
         val sentToPoweramp: Boolean = if (sendToPoweramp) {
             val infoLine = makeInfoLine(context, lyrics)
             val intent = Intent(PowerampAPI.Lyrics.ACTION_UPDATE_LYRICS).apply {
                 putExtra(PowerampAPI.EXTRA_ID, powerampId)
-                if (lyrics?.instrumental == true) {
+                if (lyrics.instrumental == true) {
                     Log.i(TAG, "sendLyricResponse: track is instrumental")
                     if (markInstrumental == true) {
                         Log.d(TAG, "sendLyricResponse: marking as instrumental")
@@ -116,7 +116,7 @@ object PowerampApiHelper {
                     }
                 } else {
                     Log.d(TAG, "sendLyricResponse: track is vocal")
-                    putExtra(PowerampAPI.Lyrics.EXTRA_LYRICS, lyricsContent)
+                    putExtra(PowerampAPI.Lyrics.EXTRA_LYRICS, lyricsText)
                 }
                 putExtra(PowerampAPI.Lyrics.EXTRA_INFO_LINE, infoLine)
             }
@@ -131,7 +131,19 @@ object PowerampApiHelper {
             }
         } else true //not attempted
         val result = if (saveToFile) {
-            if (lyricsContent != null) {
+            if (lyricsText != null) {
+                val lyricsContent = if (lyricsType == LyricsType.SYNCED) {
+                    buildString {
+                        appendLine("[ti:${lyrics.trackName}]")
+                        appendLine("[ar:${lyrics.artistName}]")
+                        appendLine("[al:${lyrics.albumName}]")
+                        appendLine("[length:${lyrics.getFormatAsLrcDuration()}]")
+                        appendLine("[tool:LyricsForPoweramp]")
+                        appendLine("[by:LRCLIB.net]")//Author of the LRC file (not the song)
+                        appendLine()
+                        appendLine(lyricsText)
+                    }
+                } else lyricsText
                 StorageHelper.writeLyricsFile(
                     context = context,
                     filePath = filePath,

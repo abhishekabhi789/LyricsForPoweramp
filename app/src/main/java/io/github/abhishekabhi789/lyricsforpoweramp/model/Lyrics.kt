@@ -24,8 +24,14 @@ data class Lyrics(
         val seconds = (duration % 60).toInt()
         val formatted = buildString {
             if (hours > 0) append("$hours:")
-            append(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds))
+            append(String.format(Locale.US, "%02d:%02d", minutes, seconds))
         }
         return formatted
+    }
+
+    fun getFormatAsLrcDuration(): String {
+        val minutes = (duration / 60).toInt()
+        val seconds = duration.toInt() % 60
+        return String.format(Locale.US, "%02d:%02d", minutes, seconds)
     }
 }

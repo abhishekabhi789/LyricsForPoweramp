@@ -144,7 +144,7 @@ class LyricsRequestWorker(context: Context, workerParams: WorkerParameters) :
         )
     }
 
-    private suspend fun sendLyrics(lyrics: Lyrics?, lyricsType: LyricsType) {
+    private suspend fun sendLyrics(lyrics: Lyrics, lyricsType: LyricsType) {
         val markInstrumental = AppPreference.getMarkInstrumental(mContext)
         val (sentToPoweramp, lyricsFileWritingResult) = sendLyricResponse(
             context = mContext,
