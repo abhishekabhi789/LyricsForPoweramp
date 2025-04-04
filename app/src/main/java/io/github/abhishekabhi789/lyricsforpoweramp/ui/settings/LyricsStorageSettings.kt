@@ -37,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,20 +71,32 @@ fun LyricsStorageSettings(
             var savedChoice by remember {
                 mutableStateOf(AppPreference.getSendLyricsToPoweramp(context))
             }
-            Switch(checked = savedChoice, onCheckedChange = {
-                AppPreference.setSendLyricsToPoweramp(context, it)
-                savedChoice = it
-            })
+            val accessibilityLabel = (if (savedChoice) stringResource(R.string.disable)
+            else stringResource(R.string.enable)).let {
+                "$it ${stringResource(R.string.settings_send_to_poweramp_label)}"
+            }
+            Switch(
+                checked = savedChoice, onCheckedChange = {
+                    AppPreference.setSendLyricsToPoweramp(context, it)
+                    savedChoice = it
+                },
+                modifier = Modifier.semantics { contentDescription = accessibilityLabel })
         }
         var saveAsFile by remember { mutableStateOf(AppPreference.getSaveAsFile(context)) }
         BasicSettings(
             label = stringResource(R.string.settings_save_as_file_label),
             description = stringResource(R.string.settings_save_as_file_description)
         ) {
-            Switch(checked = saveAsFile, onCheckedChange = {
-                AppPreference.setSaveAsFile(context, it)
-                saveAsFile = it
-            })
+            val accessibilityLabel = (if (saveAsFile) stringResource(R.string.disable)
+            else stringResource(R.string.enable)).let {
+                "$it ${stringResource(R.string.settings_save_as_file_label)}"
+            }
+            Switch(
+                checked = saveAsFile, onCheckedChange = {
+                    AppPreference.setSaveAsFile(context, it)
+                    saveAsFile = it
+                },
+                modifier = Modifier.semantics { contentDescription = accessibilityLabel })
         }
         AnimatedVisibility(visible = saveAsFile) {
             val accessRequestedPath by viewmodel.accessRequestedPath.collectAsState()
