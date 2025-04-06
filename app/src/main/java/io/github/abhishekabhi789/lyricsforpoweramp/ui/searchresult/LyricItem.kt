@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -96,58 +97,62 @@ fun LyricItem(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.padding(8.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Audiotrack,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(AssistChipDefaults.IconSize)
-                )
-                Text(
-                    text = lyrics.trackName,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.InterpreterMode,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(AssistChipDefaults.IconSize)
-                )
-                Text(
-                    text = lyrics.artistName,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Album,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(AssistChipDefaults.IconSize)
-                )
-                Text(
-                    text = lyrics.albumName,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
+            SelectionContainer {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Audiotrack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(AssistChipDefaults.IconSize)
+                        )
+                        Text(
+                            text = lyrics.trackName,
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.InterpreterMode,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(AssistChipDefaults.IconSize)
+                        )
+                        Text(
+                            text = lyrics.artistName,
+                            color = MaterialTheme.colorScheme.secondary,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Album,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(AssistChipDefaults.IconSize)
+                        )
+                        Text(
+                            text = lyrics.albumName,
+                            color = MaterialTheme.colorScheme.secondary,
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
             }
             Row(
                 verticalAlignment = Alignment.Top,
@@ -219,25 +224,27 @@ fun LyricItem(
                     modifier = Modifier.animateContentSize()
                 ) { pageIndex ->
                     val lyricsInView by remember(pageIndex) { derivedStateOf { lyricPages[pageIndex] } }
-                    Text(
-                        text = if (expanded) lyricsInView
-                        else lyricsInView.lines().run {
-                            subList(0, size.coerceAtMost(6)).joinToString(
-                                separator = "\n",
-                                postfix = "\n..."
-                            )
-                        },
-                        style = TextStyle(
-                            fontStyle = FontStyle.Italic,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable(interactionSource = null, indication = null) {
-                                expanded = !expanded
-                            }
-                    )
+                    SelectionContainer {
+                        Text(
+                            text = if (expanded) lyricsInView
+                            else lyricsInView.lines().run {
+                                subList(0, size.coerceAtMost(6)).joinToString(
+                                    separator = "\n",
+                                    postfix = "\n..."
+                                )
+                            },
+                            style = TextStyle(
+                                fontStyle = FontStyle.Italic,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .clickable(interactionSource = null, indication = null) {
+                                    expanded = !expanded
+                                }
+                        )
+                    }
                 }
 
                 val rotationAnimation = animateFloatAsState(
