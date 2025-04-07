@@ -1,7 +1,13 @@
 package io.github.abhishekabhi789.lyricsforpoweramp.ui.searchresult
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +24,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +37,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import io.github.abhishekabhi789.lyricsforpoweramp.R
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.StorageHelper
@@ -51,7 +59,7 @@ fun ResultBottomSheet(
     val context = LocalContext.current
     val showSendToPoweramp = remember { AppPreference.getSendLyricsToPoweramp(context) }
     val showSaveToStorage = remember { AppPreference.getSaveAsFile(context) }
-    val savedToStorage by remember {
+    val savedToStorage by remember(saveToStorage) {
         derivedStateOf {
             if (saveToStorage != null) (saveToStorage == StorageHelper.Result.SUCCESS) else null
         }
@@ -64,10 +72,25 @@ fun ResultBottomSheet(
         ) {
             val progress by animateFloatAsState(
                 targetValue = when {
-                    sentToPoweramp == true && savedToStorage == true -> 1f
-                    sentToPoweramp == true -> 0.5f
-                    else -> 0f
-                }
+                    showSendToPoweramp && showSaveToStorage -> {
+                        when {
+                            sentToPoweramp == true && savedToStorage == true -> 1f
+                            sentToPoweramp == true || savedToStorage == true -> 0.5f
+                            else -> 0f
+                        }
+                    }
+
+                    showSendToPoweramp || showSaveToStorage -> {
+                        when {
+                            sentToPoweramp == true -> 1f
+                            savedToStorage == true -> 1f
+                            else -> 0.5f
+                        }
+                    }
+
+                    else -> 1f
+                },
+                animationSpec = tween(1000)
             )
             VerticalProgressBar(progress = progress)
             Spacer(modifier = Modifier.width(8.dp))
@@ -120,6 +143,15 @@ fun StepIndicator(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null
 ) {
+    val rotation by rememberInfiniteTransition(label = "spin").animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "loading circle rotation"
+    )
     val color by animateColorAsState(
         when (isCompleted) {
             true -> MaterialTheme.colorScheme.primary
@@ -137,11 +169,13 @@ fun StepIndicator(
             imageVector = when (isCompleted) {
                 true -> Icons.Default.CheckCircle
                 false -> Icons.Default.Error
-                else -> Icons.Default.Timelapse
+                else -> ImageVector.vectorResource(R.drawable.ic_loading_circle)
             },
             contentDescription = null,
             tint = color,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier
+                .size(24.dp)
+                .graphicsLayer { rotationZ = if (isCompleted == null) rotation else 0f }
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text, color = color, modifier = Modifier.weight(1f))

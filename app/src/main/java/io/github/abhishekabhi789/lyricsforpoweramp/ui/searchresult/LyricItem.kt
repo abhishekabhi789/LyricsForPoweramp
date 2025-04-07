@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -170,12 +171,12 @@ fun LyricItem(
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
-            Row(
+            FlowRow(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                FlowRow(verticalArrangement = Arrangement.Bottom) {
+                FlowRow {
                     if (lyrics.plainLyrics != null) {
                         CustomChip(
                             label = stringResource(R.string.plain_lyrics_short),
@@ -193,25 +194,27 @@ fun LyricItem(
                         ) { scope.launch { pagerState.animateScrollToPage(lyricPages.lastIndex) } }
                     }
                 }
-                if (isLaunchedFromPowerAmp) {
-                    val preferredLyricsType =
-                        remember { AppPreference.getPreferredLyricsType(context) }
-                    val availableLyrics = buildList {
-                        if (lyrics.syncedLyrics != null) add(LyricsType.SYNCED)
-                        if (lyrics.plainLyrics != null) add(LyricsType.PLAIN)
-                        if (lyrics.instrumental == true) add(LyricsType.INSTRUMENTAL)
+                Row(horizontalArrangement = Arrangement.End, modifier = Modifier.weight(1f)) {
+                    if (isLaunchedFromPowerAmp) {
+                        val preferredLyricsType =
+                            remember { AppPreference.getPreferredLyricsType(context) }
+                        val availableLyrics = buildList {
+                            if (lyrics.syncedLyrics != null) add(LyricsType.SYNCED)
+                            if (lyrics.plainLyrics != null) add(LyricsType.PLAIN)
+                            if (lyrics.instrumental == true) add(LyricsType.INSTRUMENTAL)
+                        }
+                        var chosenType by remember {
+                            mutableStateOf(
+                                if (preferredLyricsType in availableLyrics) preferredLyricsType
+                                else availableLyrics.first()
+                            )
+                        }
+                        SendLyricsButton(
+                            availableLyricsTypes = availableLyrics,
+                            preferredLyricsType = chosenType,
+                            onTypeChanged = { chosenType = it },
+                        ) { onLyricChosen(lyrics, chosenType) }
                     }
-                    var chosenType by remember {
-                        mutableStateOf(
-                            if (preferredLyricsType in availableLyrics) preferredLyricsType
-                            else availableLyrics.first()
-                        )
-                    }
-                    SendLyricsButton(
-                        availableLyricsTypes = availableLyrics,
-                        preferredLyricsType = chosenType,
-                        onTypeChanged = { chosenType = it }
-                    ) { onLyricChosen(lyrics, chosenType) }
                 }
             }
         }
@@ -260,14 +263,14 @@ fun LyricItem(
                         .graphicsLayer {
                             translationY = -60 * abs(pagerState.currentPageOffsetFraction)
                             rotationZ = rotationAnimation.value
-                            alpha =
-                                abs(1 - abs(pagerState.currentPageOffsetFraction * 2)).coerceIn(
-                                    0f,
-                                    1f
-                                )
+                            alpha = abs(1 - abs(pagerState.currentPageOffsetFraction * 2))
+                                .coerceIn(0f, 1f)
                         }
+                        .background(
+                            MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                            CircleShape
+                        )
                         .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-
                 )
 
             }
@@ -287,6 +290,7 @@ fun SendLyricsButton(
     var expanded by remember { mutableStateOf(false) }
     Surface(
         shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         modifier = modifier.clip(MaterialTheme.shapes.small)
     ) {
@@ -317,6 +321,7 @@ fun SendLyricsButton(
                     Text(
                         text = stringResource(preferredLyricsType.label),
                         color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelMedium
                     )
                     Icon(
                         imageVector = Icons.Default.let { if (expanded) it.ArrowDropUp else it.ArrowDropDown },

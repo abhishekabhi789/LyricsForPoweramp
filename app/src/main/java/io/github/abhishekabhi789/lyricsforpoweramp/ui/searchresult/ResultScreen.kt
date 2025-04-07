@@ -24,8 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -51,9 +54,7 @@ fun ResultScreen(
     val isLaunchedFromPoweramp by remember { derivedStateOf { viewmodel.powerampId != null } }
     val sendToPowerampState by viewmodel.sendToPowerampState.collectAsState()
     val saveToStorageState by viewmodel.saveToStorageState.collectAsState()
-    val showBottomSheet by remember {
-        derivedStateOf { sendToPowerampState != null && saveToStorageState != null }
-    }
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -81,7 +82,7 @@ fun ResultScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Adaptive(230.dp),
+            columns = StaggeredGridCells.Adaptive(400.dp),
             verticalItemSpacing = 8.dp,
             contentPadding = PaddingValues(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -94,10 +95,13 @@ fun ResultScreen(
                     lyrics = lyrics,
                     isLaunchedFromPowerAmp = isLaunchedFromPoweramp,
                     onLyricChosen = { lyrics, lyricsType ->
+                        showBottomSheet = true
                         scope.launch {
                             viewmodel.sendLyricsToPoweramp(
-                                context = context, lyrics = lyrics,
-                                lyricsType = lyricsType, onComplete = onFinish
+                                context = context,
+                                lyrics = lyrics,
+                                lyricsType = lyricsType,
+                                onComplete = { if (showBottomSheet) onFinish() }
                             )
                         }
                     }
@@ -108,8 +112,12 @@ fun ResultScreen(
             ResultBottomSheet(
                 sendToPowerampState,
                 saveToStorageState,
-                onDismiss = { viewmodel.clearResultState() },
+                onDismiss = {
+                    showBottomSheet = false
+                    viewmodel.clearResultState()
+                },
                 grantAccess = {
+                    showBottomSheet = false
                     viewmodel.clearResultState()
                     val path = viewmodel.filePath.substringBeforeLast(File.separatorChar)
                     Intent(context, SettingsActivity::class.java).apply {
