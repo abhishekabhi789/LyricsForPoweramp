@@ -20,36 +20,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.maxmpz.poweramp.player;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import android.annotation.TargetApi;
 import android.media.AudioDeviceInfo;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 
 public interface RouterConsts {
 	// Sync with plugininterface-output.h
-	public static final int DEVICE_HEADSET    = 0;
-	public static final int DEVICE_SPEAKER    = 1;
-	public static final int DEVICE_BT         = 2;
-	public static final int DEVICE_USB        = 3;
-	public static final int DEVICE_OTHER      = 4;
-	public static final int DEVICE_CHROMECAST = 5;
+    int DEVICE_HEADSET    = 0;
+	int DEVICE_SPEAKER    = 1;
+	int DEVICE_BT         = 2;
+	int DEVICE_USB        = 3;
+	int DEVICE_OTHER      = 4;
+	int DEVICE_CHROMECAST = 5;
 	// 6
 
-	public static final int DEVICE_UNKNOWN = 0xFF;
+	int DEVICE_UNKNOWN = 0xFF;
 	
-	public static final int DEVICE_COUNT   = 6;
-	public static final int DEVICE_SAFE_DEFAULT = DEVICE_HEADSET;
+	int DEVICE_COUNT   = 6;
+	int DEVICE_SAFE_DEFAULT = DEVICE_HEADSET;
 
-	public static final @NonNull String DEVICE_NAME_HEADSET = "headset";
-	public static final @NonNull String DEVICE_NAME_SPEAKER = "speaker";
-	public static final @NonNull String DEVICE_NAME_BT = "bt";
-	public static final @NonNull String DEVICE_NAME_USB = "usb";
-	public static final @NonNull String DEVICE_NAME_OTHER = "other";
-	public static final @NonNull String DEVICE_NAME_CHROMECAST = "chromecast";
+	@NonNull String DEVICE_NAME_HEADSET = "headset";
+	@NonNull String DEVICE_NAME_SPEAKER = "speaker";
+	@NonNull String DEVICE_NAME_BT = "bt";
+	@NonNull String DEVICE_NAME_USB = "usb";
+	@NonNull String DEVICE_NAME_OTHER = "other";
+	@NonNull String DEVICE_NAME_CHROMECAST = "chromecast";
 
 	@TargetApi(23)
-	public static int toAndroidDeviceType(int device) {
+    static int toAndroidDeviceType(int device) {
 		switch(device) {
 			default:
 			case DEVICE_HEADSET:
@@ -66,11 +67,11 @@ public interface RouterConsts {
 	}
 
 	/** @return true if the device is a valid known device (excluding {@link #DEVICE_UNKNOWN}) */
-	public static boolean isValidKnownDevice(int device) {
+	static boolean isValidKnownDevice(int device) {
 		return device >= 0 && device < DEVICE_COUNT;
 	}
 
-	public static int getDeviceId(@Nullable String device) {
+	static int getDeviceId(@Nullable String device) {
 		if(device == null) {
 			return -1;
 		}
@@ -94,7 +95,7 @@ public interface RouterConsts {
 
 	// NOTE: used as pref part
 	// REVISIT: refactor this and following statics into a helper?
-	public static @NonNull String getDeviceName(int device) {
+	static @NonNull String getDeviceName(int device) {
 		switch(device) {
 			case DEVICE_HEADSET:
 				return DEVICE_NAME_HEADSET;

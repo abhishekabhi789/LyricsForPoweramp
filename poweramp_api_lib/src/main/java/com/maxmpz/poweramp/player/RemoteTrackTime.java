@@ -27,6 +27,8 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
 import org.eclipse.jdt.annotation.NonNull;
 
 
@@ -54,8 +56,8 @@ public class RemoteTrackTime {
 
 
 	public interface TrackTimeListener {
-		public void onTrackDurationChanged(int duration);
-		public void onTrackPositionChanged(int position);
+		void onTrackDurationChanged(int duration);
+		void onTrackPositionChanged(int position);
 	}
 
 	TrackTimeListener mTrackTimeListener;
@@ -67,7 +69,7 @@ public class RemoteTrackTime {
 
 	public void registerAndLoadStatus() {
 		IntentFilter filter = new IntentFilter(PowerampAPI.ACTION_TRACK_POS_SYNC);
-		mContext.registerReceiver(mTrackPosSyncReceiver, filter);
+		ContextCompat.registerReceiver(mContext, mTrackPosSyncReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 
 		PowerampAPIHelper.sendPAIntent(mContext, new Intent(PowerampAPI.ACTION_API_COMMAND)
 						.putExtra(PowerampAPI.EXTRA_COMMAND, PowerampAPI.Commands.POS_SYNC));

@@ -28,9 +28,8 @@ public final class PaSampleFormat {
 	public static boolean isValidFormat(int format, boolean allowReserve) {
 		if(format < 0) return false;
 		if(format >= PA_SAMPLE_FMT_NB) return false;
-		if(!allowReserve && format > PA_SAMPLE_FMT_S64P && format < PA_SAMPLE_FMT_S24) return false;
-		return true;
-	}
+        return allowReserve || format <= PA_SAMPLE_FMT_S64P || format >= PA_SAMPLE_FMT_S24;
+    }
 
 	/** This is storage bits per given sample */
 	public static int getBitsPerSample(int sampleFormat) {

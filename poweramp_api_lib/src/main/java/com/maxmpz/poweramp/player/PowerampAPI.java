@@ -23,6 +23,7 @@ package com.maxmpz.poweramp.player;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
+
 import org.eclipse.jdt.annotation.NonNull;
 
 
@@ -219,7 +220,7 @@ public final class PowerampAPI {
 
 	/**
 	 * Command values for {@link #EXTRA_COMMAND} extra.<br>
-	 * Alternatively, Commands field name can be used instead of integer value, e.g. "PAUSE", instead of 2
+	 * Alternatively, Commands field name (as a string) can be used instead of integer value, e.g. "PAUSE", instead of 2
 	 */
 	public static final class Commands {
 		/**
@@ -1181,7 +1182,6 @@ public final class PowerampAPI {
 	 * {@code boolean} - true if track is paused
 	 * @see #ACTION_STATUS_CHANGED
 	 * @see Commands#OPEN_TO_PLAY
-	 * @see ACTION_VIEW
 	 */
 	public static final String EXTRA_PAUSED = "paused";
 
@@ -1311,7 +1311,7 @@ public final class PowerampAPI {
 		public static final int REPEAT_SONG    = 3;
 
 		/**
-		 * Current song is played once, then player pauses on next song
+		 * Current song is played once, then player pauses
 		 */
 		public static final int SINGLE_SONG    = 4;
 
@@ -1562,42 +1562,42 @@ public final class PowerampAPI {
 		 */
 		public interface Flags {
 			/** Track wasn't advanced */
-			public static final int FLAG_ADVANCE_NONE            = 0;
+            int FLAG_ADVANCE_NONE            = 0;
 
 			/** Track was advanced forward */
-			public static final int FLAG_ADVANCE_FORWARD         = 0x1;
+            int FLAG_ADVANCE_FORWARD         = 0x1;
 
 			/** Track was advanced backward */
-			public static final int FLAG_ADVANCE_BACKWARD        = 0x2;
+            int FLAG_ADVANCE_BACKWARD        = 0x2;
 
 			/** Track category was advanced forward */
-			public static final int FLAG_ADVANCE_FORWARD_CAT     = 0x3;
+            int FLAG_ADVANCE_FORWARD_CAT     = 0x3;
 
 			/** Track category was advanced backward */
-			public static final int FLAG_ADVANCE_BACKWARD_CAT    = 0x4;
+            int FLAG_ADVANCE_BACKWARD_CAT    = 0x4;
 
 			/**
 			 * Track is manually selected by user from the list
 			 */
-			public static final int FLAG_ADVANCE_BY_USER         = 0x5;
+            int FLAG_ADVANCE_BY_USER         = 0x5;
 
 			/** Mask for FLAG_ADVANCE_* values */
-			public static final int FLAG_ADVANCE_MASK            = 0x7;
+            int FLAG_ADVANCE_MASK            = 0x7;
 
 			/**
 			 * Track was advanced from the notification.<br>
 			 * If set, event comes from the notification ui and we will animate aa update then
 			 */
-			public static final int FLAG_NOTIFICATION_UI         = 0x20;
+            int FLAG_NOTIFICATION_UI         = 0x20;
 
 			/** Indicates the track is the first in Poweramp service session */
-			public static final int FLAG_FIRST_IN_PLAYER_SESSION = 0x40;
+            int FLAG_FIRST_IN_PLAYER_SESSION = 0x40;
 
 			/**
 			 * The track failed to load for any reason
 			 * @since 948
 			 */
-			public static final int FLAG_FAILED                  = 0x80;
+            int FLAG_FAILED                  = 0x80;
 		}
 
 		public static final class TagStatus {
@@ -2101,7 +2101,8 @@ public final class PowerampAPI {
 		
 		/**
 		 * Extra for ACTIVITY_SETTINGS<br>
-		 * {@code boolean} if true and EXTRA_OPEN_PATH was used, pressing back will return back to the activity it was started. Otherwise by default Poweramp "restores" appropriate
+		 * {@code boolean} {@code String } if true (also for String - not "0" nor "false" nor empty) and EXTRA_OPEN_PATH was used,
+		 * pressing back will return back to the activity it was started. Otherwise by default Poweramp "restores" appropriate
 		 * parent settings page
 		 * @since 842
 		 */
