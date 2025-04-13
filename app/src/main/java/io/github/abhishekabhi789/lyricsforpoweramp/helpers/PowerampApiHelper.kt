@@ -74,7 +74,12 @@ object PowerampApiHelper {
     private fun processField(context: Context, field: FILTER, value: String?): String? {
         val filter = AppPreference.getFilter(context, field)?.lines()
         return filter?.fold(value) { cleanedValue, filterItem ->
-            cleanedValue?.replace(Regex(filterItem, RegexOption.IGNORE_CASE), "")
+            try {
+                cleanedValue?.replace(Regex(filterItem, RegexOption.IGNORE_CASE), "")
+            } catch (e: Exception) {
+                Log.w(TAG, "Invalid regex in filter for $field: '$filterItem'", e)
+                cleanedValue?.replace(filterItem, "")
+            }
         } ?: value
     }
 
