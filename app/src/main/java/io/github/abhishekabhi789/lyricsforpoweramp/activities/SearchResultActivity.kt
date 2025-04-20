@@ -58,7 +58,8 @@ class SearchResultActivity : ComponentActivity() {
                 ) {
                     ResultScreen(
                         viewmodel = viewmodel,
-                        onFinish = { finishAffinity() }
+                        onNavigateUp = { finish() },//takes to MainActivity
+                        onFinish = { finishAffinity() }//takes back to Poweramp
                     )
                 }
             }

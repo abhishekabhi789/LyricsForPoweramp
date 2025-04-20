@@ -1,19 +1,19 @@
 [versions]
 accompanistPermissions = "0.37.2"
 documentfile = "1.0.1"
-gson = "2.12.1"
+gson = "2.13.1"
 coreSplashscreen = "1.0.1"
 agp = "8.7.3"
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 activityCompose = "1.10.1"
-composeBom = "2025.03.01"
-foundation = "1.7.8"
-coroutines = "1.10.1"
+composeBom = "2025.04.01"
+foundation = "1.8.0"
+coroutines = "1.10.2"
 lifecycle = "2.8.7"
 okhttp = "4.12.0"
 ossLicensesPlugin = "0.10.6"
 playServicesOssLicenses = "17.1.0"
-workRuntimeKtx = "2.10.0"
+workRuntimeKtx = "2.10.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }

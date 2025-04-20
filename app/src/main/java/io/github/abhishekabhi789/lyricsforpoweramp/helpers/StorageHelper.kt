@@ -47,16 +47,18 @@ object StorageHelper {
             return@withContext Result.NO_PERMISSION
         }
         val (folderUri, extraPath) = processedPath
-        var parentFolder =
-            DocumentFile.fromTreeUri(context, folderUri)
-                ?: return@withContext Result.INVALID_FILEPATH
+        var parentFolder = DocumentFile.fromTreeUri(context, folderUri)
+            ?: return@withContext Result.INVALID_FILEPATH
 
         if (extraPath.isNotEmpty()) {
             //navigate to the child folder where the track is located
             for (segment in extraPath) {
                 val childFolder = parentFolder.findFile(segment)
-                    ?: parentFolder.createDirectory(segment)
-                    ?: return@withContext Result.INVALID_FILEPATH
+                    ?: run {
+                        Log.e(TAG, "writeLyricsFile: folder not found '$segment' from $extraPath")
+                        Log.i(TAG, "writeLyricsFile: filePath $filePath, uri $folderUri")
+                        return@withContext Result.INVALID_FILEPATH
+                    }
                 parentFolder = childFolder
             }
         }
@@ -84,7 +86,7 @@ object StorageHelper {
             }
             Result.SUCCESS
         } catch (e: Throwable) {
-            Log.e(TAG, "writeTextFile: Error while writing file", e)
+            Log.e(TAG, "writeTextFile: failed to write lyrics for $filePath", e)
             when (e) {
                 is FileNotFoundException -> Result.INVALID_FILEPATH
                 is SecurityException -> Result.NO_PERMISSION
