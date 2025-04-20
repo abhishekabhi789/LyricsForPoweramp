@@ -45,6 +45,7 @@ import java.io.File
 fun ResultScreen(
     modifier: Modifier = Modifier,
     viewmodel: SearchResultViewmodel,
+    onNavigateUp: () -> Unit,
     onFinish: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -68,7 +69,7 @@ fun ResultScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onFinish) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.navigate_back_action),

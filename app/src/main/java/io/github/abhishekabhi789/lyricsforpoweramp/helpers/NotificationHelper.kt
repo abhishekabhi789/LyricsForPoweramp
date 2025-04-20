@@ -68,6 +68,7 @@ class NotificationHelper(private val context: Context) {
                 putExtra(PowerampAPI.Track.TITLE, track.trackName)
                 putExtra(PowerampAPI.Track.ARTIST, track.artistName)
                 putExtra(PowerampAPI.Track.ALBUM, track.albumName)
+                putExtra(PowerampAPI.Track.PATH, track.filePath)
             }
 
             PendingIntent.getActivity(
