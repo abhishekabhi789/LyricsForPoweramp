@@ -10,8 +10,8 @@ import java.util.Locale
 @Parcelize
 data class Lyrics(
     @SerializedName("trackName") val trackName: String,
-    @SerializedName("artistName") val artistName: String,
-    @SerializedName("albumName") val albumName: String,
+    @SerializedName("artistName") val artistName: String?,
+    @SerializedName("albumName") val albumName: String?,
     @SerializedName("plainLyrics") val plainLyrics: String?,
     @SerializedName("syncedLyrics") val syncedLyrics: String?,
     @SerializedName("duration") val duration: Double,
@@ -22,11 +22,10 @@ data class Lyrics(
         val hours = (duration / 3600).toInt()
         val minutes = ((duration % 3600) / 60).toInt()
         val seconds = (duration % 60).toInt()
-        val formatted = buildString {
+        return buildString {
             if (hours > 0) append("$hours:")
             append(String.format(Locale.US, "%02d:%02d", minutes, seconds))
         }
-        return formatted
     }
 
     fun getFormatAsLrcDuration(): String {

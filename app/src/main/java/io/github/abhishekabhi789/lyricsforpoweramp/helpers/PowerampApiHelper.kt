@@ -140,8 +140,8 @@ object PowerampApiHelper {
                 val lyricsContent = if (lyricsType == LyricsType.SYNCED) {
                     buildString {
                         appendLine("[ti:${lyrics.trackName}]")
-                        appendLine("[ar:${lyrics.artistName}]")
-                        appendLine("[al:${lyrics.albumName}]")
+                        lyrics.artistName?.let { appendLine("[ar:$it]") }
+                        lyrics.albumName?.let { appendLine("[al:$it]") }
                         appendLine("[length:${lyrics.getFormatAsLrcDuration()}]")
                         appendLine("[tool:LyricsForPoweramp]")
                         appendLine("[by:LRCLIB.net]")//Author of the LRC file (not the song)
@@ -169,8 +169,12 @@ object PowerampApiHelper {
         return buildString {
             if (lyrics != null && lyrics.trackName.isNotEmpty()) {
                 appendLine("${context.getString(R.string.input_track_title_label)}: ${lyrics.trackName}")
-                appendLine("${context.getString(R.string.input_track_artists_label)}: ${lyrics.artistName}")
-                appendLine("${context.getString(R.string.input_track_album_label)}: ${lyrics.albumName}")
+                lyrics.artistName?.let {
+                    appendLine("${context.getString(R.string.input_track_artists_label)}: $it")
+                }
+                lyrics.albumName?.let {
+                    appendLine("${context.getString(R.string.input_track_album_label)}: $it")
+                }
                 appendLine()
             }
             appendLine(context.getString(R.string.response_footer_text))

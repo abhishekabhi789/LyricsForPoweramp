@@ -22,9 +22,9 @@
     <string name="clear_field">Clear %1$s</string>
     <string name="invalid_input_error">Ensure a valid input</string>
     <string name="input_track_query_label">Query</string>
-    <string name="input_track_title_label">Track Title</string>
+    <string name="input_track_title_label">Title</string>
     <string name="input_track_artists_label">Artists</string>
-    <string name="input_track_album_label">Album Name</string>
+    <string name="input_track_album_label">Album</string>
     <string name="search">Search</string>
     <!--    lyrics result-->
     <string name="result_topbar_title">Results</string>

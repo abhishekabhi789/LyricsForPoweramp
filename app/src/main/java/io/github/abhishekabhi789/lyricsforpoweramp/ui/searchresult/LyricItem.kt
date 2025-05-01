@@ -119,39 +119,43 @@ fun LyricItem(
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.InterpreterMode,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(AssistChipDefaults.IconSize)
-                        )
-                        Text(
-                            text = lyrics.artistName,
-                            color = MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
+                    lyrics.artistName?.let {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.InterpreterMode,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(AssistChipDefaults.IconSize)
+                            )
+                            Text(
+                                text = it,
+                                color = MaterialTheme.colorScheme.secondary,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
                     }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Album,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(AssistChipDefaults.IconSize)
-                        )
-                        Text(
-                            text = lyrics.albumName,
-                            color = MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.titleSmall,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
+                    lyrics.albumName?.let {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Album,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(AssistChipDefaults.IconSize)
+                            )
+                            Text(
+                                text = it,
+                                color = MaterialTheme.colorScheme.secondary,
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
                     }
                 }
             }
