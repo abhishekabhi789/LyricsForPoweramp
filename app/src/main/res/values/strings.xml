@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Lyrics for Poweramp</string>
+    <string name="app_name" translatable="false">Lyrics for Poweramp</string>
     <!--    general-->
     <string name="plain_lyrics">Plain Lyrics</string>
     <string name="synced_lyrics">Synced Lyrics</string>

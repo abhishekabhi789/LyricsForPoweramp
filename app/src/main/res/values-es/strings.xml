@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lyrics for Poweramp</string>
+    <!--    general-->
+    <string name="plain_lyrics">Letras Planas</string>
+    <string name="synced_lyrics">Letras Sincronizadas</string>
+    <string name="plain_lyrics_short">Planas</string>
+    <string name="synced_lyrics_short">Sincronizadas</string>
+    <string name="track">Canción</string>
+    <string name="navigate_back_action">Atrás</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="enable">Habilitar</string>
+    <string name="disable">Deshabilitar</string>
+    <string name="done">Listo</string>
+    <string name="response_footer_text">Ofrecido por Lyrics for Poweramp</string>
+    <string name="toast_failed_to_browse_link">No se pudo abrir el enlace</string>
+    <!--    top bar-->
+    <string name="top_bar_menu_descriptions">Más Opciones</string>
+    <!--    search ui-->
+    <string name="coarse_search">Búsqueda General</string>
+    <string name="fine_search">Búsqueda Precisa</string>
+    <string name="clear_field">Borrar %1$s</string>
+    <string name="invalid_input_error">Asegúrate de que la entrada sea válida</string>
+    <string name="input_track_query_label">Consulta</string>
+    <string name="input_track_title_label">Título</string>
+    <string name="input_track_artists_label">Artistas</string>
+    <string name="input_track_album_label">Álbum</string>
+    <string name="search">Buscar</string>
+    <!--    lyrics result-->
+    <string name="result_topbar_title">Resultados</string>
+    <string name="send_lyrics_button">Enviar estas letras</string>
+    <string name="change_preferred_lyrics_type">Cambiar tipo de letras</string>
+    <string name="sending_lyrics">Enviando letras</string>
+    <string name="lyrics_sent_successfully">Letras enviadas</string>
+    <string name="lyrics_save_to_storage">Guardar letras en almacenamiento</string>
+    <string name="result_change_type_button_label">Cambiar tipo de letras</string>
+    <string name="result_type_synced_description">Letras sincronizadas de esta pista</string>
+    <string name="result_type_plain_description">Letras planas de esta pista</string>
+    <!--    about activity-->
+    <string name="about">Acerca de</string>
+    <string name="version">Versión</string>
+    <string name="third_party_licenses">Licencias de Terceros</string>
+    <string name="link_to_github">Visitar en GitHub</string>
+    <string name="link_to_playstore">Obtener desde Play Store</string>
+    <string name="link_to_ko_fi">Donar vía Ko-Fi</string>
+    <string name="link_to_guide">Leer Guía</string>
+    <!-- Settings -->
+    <string name="top_bar_settings">Configuración</string>
+    <string name="settings_app_theme_label">Tema</string>
+    <string name="settings_app_theme_description">Tema de la App</string>
+    <string name="settings_theme_auto_label">Predeterminado del Sistema</string>
+    <string name="settings_theme_light_label">Tema Claro</string>
+    <string name="settings_theme_dark_label">Tema Oscuro</string>
+    <string name="settings_lyrics_request_label">Solicitudes de Letras</string>
+    <string name="settings_fallback_to_search_label">Buscar Alternativa</string>
+    <string name="settings_fallback_to_search_description">Si no se pueden recuperar las letras exactas, se realizará una búsqueda más amplia.\nNota: Esto puede devolver letras incorrectas ocasionalmente.</string>
+    <string name="settings_notification_permission_label">Permiso de Notificación</string>
+    <string name="settings_notification_permission_description">Se requiere permiso para mostrar notificaciones sobre el estado de la solicitud de letras.</string>
+    <string name="settings_permission_button_grant">Conceder</string>
+    <string name="settings_permission_dialog_title">Permiso Requerido</string>
+    <string name="settings_permission_dialog_ask">Conceder</string>
+    <string name="settings_permission_dialog_deny">Denegar</string>
+    <string name="settings_permission_dialog_disable_notification">Desactivar Notificaciones</string>
+    <string name="settings_permission_toast_notification_disabled">Notificaciones desactivadas</string>
+    <string name="settings_permission_toast_graned">Permiso Concedido</string>
+    <string name="settings_permission_toast_denied">Permiso Denegado</string>
+    <string name="settings_request_fail_notification_label">Notificar en Fallo de Solicitud</string>
+    <string name="settings_request_fail_notification_description">Recibe una notificación cuando falle la recuperación de letras. Permite búsqueda manual.</string>
+    <string name="settings_overwrite_existing_notification_label">Reemplazar Notificación Anterior</string>
+    <string name="settings_overwrite_existing_notification_description">Una nueva notificación reemplazará a la anterior.</string>
+    <string name="settings_preferred_lyrics_type_label">Tipo de Letras Preferido</string>
+    <string name="settings_preferred_lyrics_type_description">Establece una preferencia predeterminada para letras sincronizadas o planas.</string>
+    <string name="settings_mark_instrumental_tracks">Marcar Canciones Instrumentales</string>
+    <string name="settings_mark_instrumental_tracks_description">Etiqueta las pistas sin voz como instrumentales. Poweramp no solicitará más letras para estas pistas.</string>
+    <string name="settings_lyrics_storage_label">Configuración de Almacenamiento de Letras</string>
+    <string name="settings_send_to_poweramp_label">Enviar Letras a Poweramp</string>
+    <string name="settings_send_to_poweramp_description">Las letras se guardarán en la caché de Poweramp, permitiendo actualizaciones desde la interfaz de Poweramp.</string>
+    <string name="settings_save_as_file_label">Guardar Letras como Archivos</string>
+    <string name="settings_save_as_file_description">Guarda letras como archivos de texto en la misma carpeta que el archivo de música. Asegúrate de seleccionar las carpetas correctas abajo.</string>
+    <string name="settings_save_as_file_info">Selecciona las carpetas donde están tus archivos de música para guardar las letras en la misma ubicación.</string>
+    <string name="settings_save_as_file_folder_list_title">Carpetas Seleccionadas</string>
+    <string name="settings_save_as_file_choose_new_folder">Elegir Carpeta</string>
+    <string name="settings_save_as_file_button_grant_access">Conceder Acceso</string>
+    <string name="settings_save_as_file_button_remove_folder">Eliminar</string>
+    <string name="settings_save_as_file_no_folders">No se seleccionaron carpetas</string>
+    <string name="settings_save_as_file_permission_explanation">Necesitas conceder permiso para acceder a %1$s y guardar archivos de letras.</string>
+    <string name="settings_filter_label">Filtros</string>
+    <string name="settings_filter_description">Estas palabras se eliminarán de los campos respectivos durante el procesamiento. No distingue mayúsculas/minúsculas. Soporta expresiones regulares.</string>
+    <string name="settings_filter_title_label">Filtro de Título</string>
+    <string name="settings_filter_artists_label">Filtro de Artistas</string>
+    <string name="settings_filter_album_label">Filtro de Álbum</string>
+    <string name="clear_field_title">¿Borrar este campo?</string>
+    <string name="input_clear_confirmation_message">¿Estás seguro de que deseas borrar el campo %1$s?</string>
+    <!--    notifications-->
+    <string name="lyrics_request_handling_notifications">Notificaciones de Solicitudes de Letras</string>
+    <string name="timeout_cancelled">Tiempo de espera cancelado</string>
+    <string name="notification_manual_search_suggestion">Toca aquí para buscar manualmente</string>
+    <string name="request_handling_notification_title">Procesando Solicitud</string>
+    <string name="notification_storage_access_needed_title">Se necesita acceso a la carpeta</string>
+    <string name="notification_storage_missing_access_to_path">Toca aquí para conceder acceso a %1$s.</string>
+    <string name="notification_no_saving_method_title">Guardado de letras desactivado</string>
+    <string name="notification_no_saving_method_description">Activa al menos un método de guardado de letras</string>
+    <!--    Api Errors-->
+    <string name="error_cancelled">Cancelado</string>
+    <string name="error_empty_response">Respuesta Vacía</string>
+    <string name="error_network">Error de Red</string>
+    <string name="error_timeout">Tiempo de Espera Excedido</string>
+    <string name="error_exception">Error, ocurrió una excepción</string>
+    <string name="error_no_track_name">El nombre de la pista no puede estar vacío</string>
+    <string name="error_preparing_url">Error al preparar la URL de solicitud</string>
+    <string name="error_no_results">No se encontraron resultados</string>
+    <string name="error_processing_error">Error al procesar la respuesta</string>
+    <!--    lyrics file writing status messages-->
+    <string name="lyrics_write_success">Archivo guardado correctamente.</string>
+    <string name="lyrics_write_no_permission">Sin acceso para escribir en esta carpeta</string>
+    <string name="lyrics_write_invalid_path">No se pudo determinar la ruta del archivo.</string>
+    <string name="lyrics_write_invalid_lyrics">No se pudieron analizar las letras para guardarlas.</string>
+    <string name="lyrics_write_unknown_error">Ocurrió un error desconocido al guardar el archivo.</string>
+</resources>
