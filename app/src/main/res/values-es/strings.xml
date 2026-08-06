@@ -104,6 +104,7 @@
     <!-- about activity -->
     <string name="about">Acerca de</string>
     <string name="version">Versión</string>
+    <string name="copyright">© 2024–2026 Abhishek M.\n Todos los derechos reservados.</string>
     <string name="third_party_licenses">Licencias de terceros</string>
     <string name="link_to_github">Visitar en GitHub</string>
     <string name="link_to_play_store">Obtener en Play Store</string>

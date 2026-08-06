@@ -105,6 +105,7 @@
     <!-- about activity -->
     <string name="about">About</string>
     <string name="version">Version</string>
+    <string name="copyright">Copyright © 2024–2026 Abhishek M.\n All Rights Reserved.</string>
     <string name="third_party_licenses">Third-party licenses</string>
     <string name="link_to_github">Visit on GitHub</string>
     <string name="link_to_play_store">Get from Play Store</string>

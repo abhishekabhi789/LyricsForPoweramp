@@ -64,6 +64,17 @@ Read the Privacy Policy [here](docs/privacy-policy.md)
 3. [TagLib by Kyant0](https://github.com/Kyant0/taglib) - Audio tag editing library
 4. [SVG Repo](https://www.svgrepo.com/svg/490368/song) - App Icon (Public Domain)
 
+### :page_with_curl: License & Copyright
+
+Copyright &copy; 2024–2026 Abhishek M. All Rights Reserved.
+
+This repository is **Source-Available** for security auditing and verification purposes. It is **not** open-source software under an OSI-approved license.
+
+- You **may** view and build the source code for personal use.
+- You **may not** redistribute, sell, relicense, or create derivative works based on this code.
+
+For complete license terms, see the [LICENSE](/LICENSE) file.
+
 ### :running: Check Out Other Projects
 
 Visit [Website](https://abhishekabhi789.github.io/)
