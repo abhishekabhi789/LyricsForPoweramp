@@ -45,6 +45,9 @@ class SearchResultViewmodel @Inject constructor(
     val preferredLyricsType = appPreference.preferredLyricsType
         .stateIn(viewModelScope, SharingStarted.Lazily, LyricsType.SYNCED)
 
+    val fixSongMetadata = appPreference.fixSongMetadata
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
     fun setSearchResultDataKey(key: String): Boolean {
         val data = searchRepository.getResult(key)
         if (data == null) {
@@ -97,8 +100,9 @@ class SearchResultViewmodel @Inject constructor(
         lyrics: Lyrics,
         lyricsType: LyricsType,
         markInstrumental: Boolean = false,
+        fixSongMetadata: Boolean
     ) {
-        pendingSend = LyricsSendData(lyrics, lyricsType, markInstrumental)
+        pendingSend = LyricsSendData(lyrics, lyricsType, markInstrumental, fixSongMetadata)
         clearResultState()
         val data = _searchResultData.value
         if (data == null) {
@@ -112,7 +116,8 @@ class SearchResultViewmodel @Inject constructor(
                     powerampId = realId,
                     lyrics = lyrics,
                     lyricsType = lyricsType,
-                    markInstrumental = markInstrumental
+                    markInstrumental = markInstrumental,
+                    fixMetadata = fixSongMetadata
                 ).collect { state -> _lyricsSavingState.value = state }
             } ?: Log.e(TAG, "sendLyricsToPoweramp: Poweramp realId is null")
         }
@@ -124,7 +129,8 @@ class SearchResultViewmodel @Inject constructor(
             sendLyricsToPoweramp(
                 lyrics = request.lyrics,
                 lyricsType = request.type,
-                markInstrumental = request.markInstrumental
+                markInstrumental = request.markInstrumental,
+                fixSongMetadata = request.fixSongMetadata
             )
         } else {
             Log.w(TAG, "retrySend: Nothing to retry")

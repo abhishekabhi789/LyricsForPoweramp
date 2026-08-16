@@ -92,13 +92,14 @@ class LyricsRequestWorker @AssistedInject constructor(
             return Result.failure()
         }
         val preferredLyricsType = appPreference.preferredLyricsType.first()
+        val fixSongMetadata = appPreference.fixSongMetadata.first()
 
         return withTimeoutOrNull(POWERAMP_LYRICS_REQUEST_WAIT_TIMEOUT) {
             val lyrics = getLyrics(mTrack, preferredLyricsType)
             if (lyrics == null) {
                 Result.failure()
             } else {
-                saveLyrics(lyrics, preferredLyricsType)
+                saveLyrics(lyrics, preferredLyricsType, fixSongMetadata)
                 Result.success()
             }
         } ?: run {
@@ -151,14 +152,19 @@ class LyricsRequestWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun saveLyrics(lyrics: Lyrics, lyricsType: LyricsType) {
+    private suspend fun saveLyrics(
+        lyrics: Lyrics,
+        lyricsType: LyricsType,
+        fixSongMetadata: Boolean
+    ) {
         val markInstrumental = appPreference.markInstrumental.first()
         lyricsSavingHelper.saveLyrics(
             filePath = mTrack.filePath,
             powerampId = mTrack.realId ?: PowerampAPI.ID_NO_ID,
             lyrics = lyrics,
             lyricsType = lyricsType,
-            markInstrumental = markInstrumental
+            markInstrumental = markInstrumental,
+            fixMetadata = fixSongMetadata,
         ).collect { state ->
             val path = mTrack.filePath.substringBeforeLast(File.separatorChar)
             val notificationText = when (state.saveAsFile.result) {

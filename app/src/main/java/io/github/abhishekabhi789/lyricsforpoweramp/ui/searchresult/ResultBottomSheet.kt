@@ -69,6 +69,7 @@ fun ResultBottomSheet(
     val sendToPoweramp by remember(lyricsSavingState) { derivedStateOf { lyricsSavingState.sendToPoweramp } }
     val saveToStorage by remember(lyricsSavingState) { derivedStateOf { lyricsSavingState.saveAsFile } }
     val embedIntoFile by remember(lyricsSavingState) { derivedStateOf { lyricsSavingState.embedIntoFile } }
+    val fixSongMetadata by remember(lyricsSavingState) { derivedStateOf { lyricsSavingState.fixSongMetaData } }
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Row(
@@ -133,6 +134,23 @@ fun ResultBottomSheet(
                         onAction = if (embedIntoFile.result == StorageHelper.Result.NO_PERMISSION) grantAccess else null
                     )
                 }
+
+                if (fixSongMetadata.shouldPerform){
+                    val label = when (fixSongMetadata.result) {
+                        StorageHelper.Result.SUCCESS -> R.string.lyrics_metadata_fixed
+                        else -> fixSongMetadata.result?.messageResId
+                    }
+                    StepIndicator(
+                        text = stringResource(
+                            label ?: R.string.settings_fix_song_metadata_label
+                        ),
+                        isCompleted = fixSongMetadata.result?.let { it == StorageHelper.Result.SUCCESS },
+                        actionLabel = if (fixSongMetadata.result == StorageHelper.Result.NO_PERMISSION)
+                            stringResource(R.string.settings_add_folder_button_grant_access) else null,
+                        onAction = if (fixSongMetadata.result == StorageHelper.Result.NO_PERMISSION) grantAccess else null
+                    )
+                }
+
                 val completed: Boolean? by remember(lyricsSavingState) {
                     derivedStateOf {
                         if (lyricsSavingState.progress == 1f) return@derivedStateOf true

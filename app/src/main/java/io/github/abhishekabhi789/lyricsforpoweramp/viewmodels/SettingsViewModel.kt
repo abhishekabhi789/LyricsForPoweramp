@@ -129,6 +129,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    val fixSongMetadata = appPreference.fixSongMetadata
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    fun setFixSongMetadata(enabled: Boolean) {
+        viewModelScope.launch {
+            appPreference.setPreference(AppPreference.FIX_SONG_METADATA, enabled)
+        }
+    }
+
     private val _powerampFolders = MutableStateFlow<List<PowerampFolder>>(emptyList())
     val powerampFolders = _powerampFolders.asStateFlow()
 

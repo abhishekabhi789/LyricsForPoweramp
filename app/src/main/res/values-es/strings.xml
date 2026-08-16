@@ -59,6 +59,7 @@
     <string name="lyrics_sent_to_pa">Letras enviadas a Poweramp</string>
     <string name="lyrics_saved_to_storage">Guardado como archivo de letras</string>
     <string name="lyrics_embedded_to_track">Letras incrustadas en el archivo</string>
+    <string name="lyrics_metadata_fixed">Metadatos fijos</string>
     <string name="result_type_synced_description">Letras sincronizadas de esta pista</string>
     <string name="result_type_plain_description">Letras sin sincronizar de esta pista</string>
     <string name="result_same_duration">Misma duración</string>
@@ -157,6 +158,8 @@
     <string name="settings_save_id_tags_in_lrc_file_description">Añadir metadatos de la canción (como título y artista) como etiquetas ID dentro del archivo LRC.</string>
     <string name="settings_embed_into_song_file_label">Incrustar letras en archivo</string>
     <string name="settings_embed_into_song_file_description">Incrusta las letras directamente en el archivo de audio.</string>
+    <string name="settings_fix_song_metadata_label">Corregir metadatos de la canción</string>
+    <string name="settings_fix_song_metadata_description">Actualiza automáticamente el título de la canción, el artista y el nombre del álbum mientras guardas la letra.</string>
     <string name="settings_add_custom_folder_title">Carpetas seleccionadas personalizadas</string>
     <string name="settings_add_folder_add_new">Elegir carpeta</string>
     <string name="settings_add_folder_button_grant_access">Conceder acceso</string>

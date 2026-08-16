@@ -2,6 +2,7 @@ package io.github.abhishekabhi789.lyricsforpoweramp.helpers
 
 import android.content.Context
 import android.util.Log
+import com.kyant.taglib.PropertyMap
 import com.maxmpz.poweramp.player.PowerampAPIHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Lyrics
 import io.github.abhishekabhi789.lyricsforpoweramp.model.LyricsType
@@ -25,7 +26,8 @@ class LyricsSavingHelper @Inject constructor(
         powerampId: Long,
         lyrics: Lyrics,
         lyricsType: LyricsType,
-        markInstrumental: Boolean
+        markInstrumental: Boolean,
+        fixMetadata: Boolean
     ): Flow<LyricsSavingState> = flow {
         //these configs are read everytime user saving lyrics, to get the up-to date values
         val shouldSendToPA = appPreference.sendLyricsToPoweramp.first()
@@ -38,11 +40,13 @@ class LyricsSavingHelper @Inject constructor(
             progress = progress,
             sendToPoweramp = LyricsSavingState.Operation(shouldPerform = shouldSendToPA),
             saveAsFile = LyricsSavingState.Operation(shouldPerform = shouldSaveAsFile),
-            embedIntoFile = LyricsSavingState.Operation(shouldPerform = embedIntoFile)
+            embedIntoFile = LyricsSavingState.Operation(shouldPerform = embedIntoFile),
+            fixSongMetaData = LyricsSavingState.Operation(shouldPerform = fixMetadata)
         )
         emit(state)
 
-        val totalSteps = listOf(shouldSendToPA, shouldSaveAsFile, embedIntoFile).count { it }
+        val totalSteps =
+            listOf(shouldSendToPA, shouldSaveAsFile, embedIntoFile, fixMetadata).count { it }
         val stepSize = 1f / totalSteps
 
         val lyricsText: String = when (lyricsType) {
@@ -71,41 +75,42 @@ class LyricsSavingHelper @Inject constructor(
                 emit(state)
             }
         }
-        if (lyricsType != LyricsType.INSTRUMENTAL) {
-            if (shouldSaveAsFile) {
-                val lyricsContent = if (saveIdTagsInFile && lyricsType == LyricsType.SYNCED) {
-                    buildString {
-                        appendLine("[ti:${lyrics.trackName}]")
-                        lyrics.artistName?.let { appendLine("[ar:$it]") }
-                        lyrics.albumName?.let { appendLine("[al:$it]") }
-                        appendLine("[length:${lyrics.getFormatAsLrcDuration()}]")
-                        appendLine("[tool:LyricsForPoweramp]")
-                        appendLine("[by:LRCLIB.net]")//Author of the LRC file (not the song)
-                        appendLine()
-                        appendLine(lyricsText)
-                    }
-                } else lyricsText
-                val saveResult = storageHelper.writeLyricsFile(
-                    context = context,
-                    filePath = filePath,
-                    lyricsContent = lyricsContent,
-                    lyricsType = lyricsType,
-                )
-                Log.i(TAG, "saveLyrics: save to storage $saveResult")
-                if (saveResult == StorageHelper.Result.SUCCESS) progress += stepSize
-                val savedToFile = state.saveAsFile.copy(result = saveResult)
-                state = state.copy(progress = progress, saveAsFile = savedToFile)
-                emit(state)
-            }
-            if (embedIntoFile) {
-                if (filePath != null) {
-                    val onSessionError = { error: StorageHelper.Result ->
-                        state = state.copy(embedIntoFile = state.embedIntoFile.copy(result = error))
-                    }
-                    taglibHelper.getTaglibSession(filePath, onError = onSessionError)
-                        ?.use { session ->
-                            if (session.updateLyricsTag(lyricsText) && session.saveModifiedFile()) {
-                                Log.i(TAG, "saveLyrics: embedded into song tag")
+        if (shouldSaveAsFile && lyricsType != LyricsType.INSTRUMENTAL) {
+            val lyricsContent = if (saveIdTagsInFile && lyricsType == LyricsType.SYNCED) {
+                buildString {
+                    appendLine("[ti:${lyrics.trackName}]")
+                    lyrics.artistName?.let { appendLine("[ar:$it]") }
+                    lyrics.albumName?.let { appendLine("[al:$it]") }
+                    appendLine("[length:${lyrics.getFormatAsLrcDuration()}]")
+                    appendLine("[tool:LyricsForPoweramp]")
+                    appendLine("[by:LRCLIB.net]")//Author of the LRC file (not the song)
+                    appendLine()
+                    appendLine(lyricsText)
+                }
+            } else lyricsText
+            val saveResult = storageHelper.writeLyricsFile(
+                context = context,
+                filePath = filePath,
+                lyricsContent = lyricsContent,
+                lyricsType = lyricsType,
+            )
+            Log.i(TAG, "saveLyrics: save to storage $saveResult")
+            if (saveResult == StorageHelper.Result.SUCCESS) progress += stepSize
+            val savedToFile = state.saveAsFile.copy(result = saveResult)
+            state = state.copy(progress = progress, saveAsFile = savedToFile)
+            emit(state)
+        }
+        if (embedIntoFile || fixMetadata) {
+            if (filePath != null) {
+                val onSessionError = { error: StorageHelper.Result ->
+                    state = state.copy(embedIntoFile = state.embedIntoFile.copy(result = error))
+                }
+                taglibHelper.getTaglibSession(filePath, onError = onSessionError)
+                    ?.use { session ->
+                        val metadata: PropertyMap = session.getMetadata() ?: PropertyMap()
+                        if (embedIntoFile && lyricsType != LyricsType.INSTRUMENTAL) {
+                            metadata[TaglibHelper.KEY_LYRICS] = arrayOf(lyricsText)
+                            if (session.setMetadata(metadata)) {
                                 progress += stepSize
                                 state = state.copy(
                                     progress = progress,
@@ -115,14 +120,36 @@ class LyricsSavingHelper @Inject constructor(
                                 embedIntoFile = state.embedIntoFile.copy(result = StorageHelper.Result.UNKNOWN_ERROR)
                             )
                         }
-                } else {
-                    state = state.copy(
-                        embedIntoFile = state.embedIntoFile.copy(result = StorageHelper.Result.INVALID_FILEPATH)
-                    )
-                }
-                emit(state)
+                        if (fixMetadata) {
+                            metadata[TaglibHelper.KEY_TITLE] = arrayOf(lyrics.trackName)
+                            lyrics.artistName?.let {
+                                metadata[TaglibHelper.KEY_ARTIST] = arrayOf(it)
+                            }
+                            lyrics.albumName?.let {
+                                metadata[TaglibHelper.KEY_ALBUM] = arrayOf(it)
+                            }
+                            if (session.setMetadata(metadata)) {
+                                progress += stepSize
+                                state = state.copy(
+                                    progress = progress,
+                                    fixSongMetaData = state.fixSongMetaData.copy(result = StorageHelper.Result.SUCCESS)
+                                )
+                            } else state = state.copy(
+                                fixSongMetaData = state.fixSongMetaData.copy(result = StorageHelper.Result.UNKNOWN_ERROR)
+                            )
+                        }
+                        session.saveModifiedFile().let { saved: Boolean ->
+                            Log.d(TAG, "saveLyrics: saved modified file $saved")
+                        }
+                    }
+            } else {
+                state = state.copy(
+                    embedIntoFile = state.embedIntoFile.copy(result = StorageHelper.Result.INVALID_FILEPATH)
+                )
             }
+            emit(state)
         }
+
         state = state.copy(progress = state.progress.coerceIn(0.0f, 1f))
         emit(state)
     }.flowOn(Dispatchers.IO)
@@ -136,7 +163,8 @@ data class LyricsSavingState(
     val progress: Float = 0f,
     val sendToPoweramp: Operation<Boolean?> = Operation(shouldPerform = false),
     val saveAsFile: Operation<StorageHelper.Result?> = Operation(shouldPerform = false),
-    val embedIntoFile: Operation<StorageHelper.Result?> = Operation(shouldPerform = false)
+    val embedIntoFile: Operation<StorageHelper.Result?> = Operation(shouldPerform = false),
+    val fixSongMetaData: Operation<StorageHelper.Result?> = Operation(shouldPerform = false)
 ) {
     data class Operation<T>(val shouldPerform: Boolean = false, val result: T? = null)
 }

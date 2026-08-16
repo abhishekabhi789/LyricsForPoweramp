@@ -80,6 +80,9 @@ class EditorViewmodel @Inject constructor(
     val saveAsFileEnabled = appPreference.saveLyricsAsFile
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
+    val fixSongMetadata = appPreference.fixSongMetadata
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     fun setSaveAsFile(enabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             appPreference.setPreference(AppPreference.SAVE_LYRICS_IN_FILE, enabled)
@@ -156,6 +159,7 @@ class EditorViewmodel @Inject constructor(
     fun saveLyrics() {
         val lyricsContent = _inputState.value.lyrics
         val filePath = _filepath.value
+        val fixMetadata = fixSongMetadata.value
         viewModelScope.launch(Dispatchers.IO) {
             resetLyricsSavingState()
             lyricsSavingHelper.saveLyrics(
@@ -163,7 +167,8 @@ class EditorViewmodel @Inject constructor(
                 powerampId = powerampId,
                 lyrics = lyrics.copy(syncedLyrics = lyricsContent),
                 lyricsType = LyricsType.SYNCED,
-                markInstrumental = false
+                markInstrumental = false,
+                fixMetadata = fixMetadata
             ).collect { state ->
                 _lyricsSavingState.value = state
                 if (state.progress == 1f) setLastSavedLyrics(lyricsContent)

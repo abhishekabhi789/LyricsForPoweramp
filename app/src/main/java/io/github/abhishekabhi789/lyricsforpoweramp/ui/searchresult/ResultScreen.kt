@@ -73,6 +73,7 @@ fun ResultScreen(
     val permissionState = rememberFolderAccess(filePath.substringBeforeLast("/"))
     var lyricsForTagEdit: Lyrics? by remember { mutableStateOf(null) }
     val preferredLyricsType by viewmodel.preferredLyricsType.collectAsStateWithLifecycle()
+    val fixSongMetadata by viewmodel.fixSongMetadata.collectAsStateWithLifecycle()
     val selectedSortOrder by viewmodel.sortOrder.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -158,12 +159,14 @@ fun ResultScreen(
                     trackDuration = searchResultData?.trackDuration,
                     isLaunchedFromPowerAmp = showLyricsActions,
                     preferredLyricsType = preferredLyricsType,
-                    onLyricChosen = { lyricsType ->
+                    fixSongMetaData = fixSongMetadata,
+                    onLyricChosen = { lyricsType, fixMetadata ->
                         showBottomSheet = true
                         scope.launch {
                             viewmodel.sendLyricsToPoweramp(
                                 lyrics = lyrics,
                                 lyricsType = lyricsType,
+                                fixSongMetadata = fixMetadata
                             )
                         }
                     },

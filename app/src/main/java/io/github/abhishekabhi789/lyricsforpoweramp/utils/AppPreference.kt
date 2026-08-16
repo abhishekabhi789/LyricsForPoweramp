@@ -72,6 +72,8 @@ class AppPreference @Inject constructor(
 
     val embedLyricsIntoFile = dataStore.data.map { it[EMBED_LYRICS_AS_TAG] ?: false }
 
+    val fixSongMetadata = dataStore.data.map { it[FIX_SONG_METADATA] ?: false }
+
     val savedUris = dataStore.data.map { preference ->
         preference[FOLDER_URIS]?.map { it.toUri() } ?: emptyList()
     }
@@ -180,6 +182,7 @@ class AppPreference @Inject constructor(
         val SAVE_LYRICS_IN_FILE = booleanPreferencesKey("save_lyrics_in_file")
         val SAVE_ID_TAGS_IN_FILE = booleanPreferencesKey("save_id_tags_in_file")
         val EMBED_LYRICS_AS_TAG = booleanPreferencesKey("embed_lyrics_as_tag")
+        val FIX_SONG_METADATA = booleanPreferencesKey("fix_song_metadata")
         val FOLDER_URIS = stringSetPreferencesKey("folder_uri_list")
         val MARK_INSTRUMENTAL_LYRICS = booleanPreferencesKey("mark_instrumental_lyrics")
         val TIMESTAMP_DELTA = intPreferencesKey("timestamp_delta_in_centi_seconds")

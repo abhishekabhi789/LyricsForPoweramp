@@ -62,6 +62,7 @@
     <string name="lyrics_sent_to_pa">Lyrics sent to Poweramp</string>
     <string name="lyrics_saved_to_storage">Saved as lyrics file</string>
     <string name="lyrics_embedded_to_track">Embedded to song file</string>
+    <string name="lyrics_metadata_fixed">Fixed Metadata</string>
     <string name="result_type_synced_description">Synced lyrics for this track</string>
     <string name="result_type_plain_description">Plain lyrics for this track</string>
     <string name="result_same_duration">Same Duration</string>
@@ -158,6 +159,8 @@
     <string name="settings_save_id_tags_in_lrc_file_description">Add song metadata (like title and artist) as ID tags inside the LRC lyrics file.</string>
     <string name="settings_embed_into_song_file_label">Embed Lyrics into File</string>
     <string name="settings_embed_into_song_file_description">Embed the lyrics directly into the music file.</string>
+    <string name="settings_fix_song_metadata_label">Fix Song Metadata</string>
+    <string name="settings_fix_song_metadata_description">Automatically update song title, artist and album name while saving lyrics.</string>
     <string name="settings_add_custom_folder_title">Custom Selected Folders</string>
     <string name="settings_add_folder_add_new">Choose Folder</string>
     <string name="settings_add_folder_button_grant_access">Grant Access</string>

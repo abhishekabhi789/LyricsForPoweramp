@@ -39,6 +39,7 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -55,9 +56,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -84,7 +87,8 @@ fun LyricItem(
     trackDuration: Int? = null,
     isLaunchedFromPowerAmp: Boolean,
     preferredLyricsType: LyricsType,
-    onLyricChosen: (preferredLyricsType: LyricsType) -> Unit,
+    fixSongMetaData: Boolean,
+    onLyricChosen: (preferredLyricsType: LyricsType, fixMetadata: Boolean) -> Unit,
     onEditLyrics: (preferredLyricsType: LyricsType) -> Unit,
     onFixMetadata: () -> Unit
 ) {
@@ -264,13 +268,14 @@ fun LyricItem(
                                 actionLabel = stringResource(R.string.edit_lyrics),
                                 availableLyricsTypes = availableLyrics,
                                 preferredLyricsType = preferredLyricsType,
-                                onConfirm = onEditLyrics
+                                onConfirm = { type, _ -> onEditLyrics(type) }
                             )
                             LyricsAction(
                                 actionIcon = Icons.Default.Save,
                                 actionLabel = stringResource(R.string.save),
                                 availableLyricsTypes = availableLyrics,
                                 preferredLyricsType = preferredLyricsType,
+                                fixSongMetaData = fixSongMetaData,
                                 selected = true,
                                 onConfirm = onLyricChosen
                             )
@@ -347,14 +352,18 @@ fun LyricsAction(
     availableLyricsTypes: List<LyricsType>,
     selected: Boolean = false,
     preferredLyricsType: LyricsType,
-    onConfirm: (LyricsType) -> Unit,
+    fixSongMetaData: Boolean? = null,
+    onConfirm: (chosenType: LyricsType, fixMetadata: Boolean) -> Unit,
 ) {
+    var fixMetadataChecked by rememberSaveable(fixSongMetaData) {
+        mutableStateOf(fixSongMetaData)
+    }
     var showDialog by remember { mutableStateOf(false) }
     val invokeAction = {
         if (availableLyricsTypes.size > 1) {
             showDialog = true
         } else {
-            onConfirm(availableLyricsTypes.first())
+            onConfirm(availableLyricsTypes.first(), fixMetadataChecked ?: false)
         }
     }
     CustomChip(
@@ -386,6 +395,18 @@ fun LyricsAction(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(stringResource(R.string.result_action_dialog_common_description))
+                fixMetadataChecked?.let { fixMetaData ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.large)
+                            .clickable { fixMetadataChecked = !fixMetaData }
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Checkbox(checked = fixMetaData, onCheckedChange = null)
+                        Text(stringResource(R.string.settings_fix_song_metadata_label))
+                    }
+                }
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(
                         8.dp, Alignment.CenterHorizontally
@@ -394,10 +415,11 @@ fun LyricsAction(
                     availableLyricsTypes.forEach { lyricsType ->
                         InputChip(
                             selected = lyricsType == preferredLyricsType,
-                            onClick = { onConfirm(lyricsType); showDialog = false },
-                            label = {
-                                Text(stringResource(lyricsType.longLabelResId))
-                            })
+                            onClick = {
+                                onConfirm(lyricsType, fixMetadataChecked ?: false)
+                                showDialog = false
+                            },
+                            label = { Text(stringResource(lyricsType.longLabelResId)) })
                     }
                     OutlinedButton(onClick = { showDialog = false }) {
                         Text(stringResource(R.string.cancel))
@@ -426,7 +448,8 @@ fun PreviewLyricItem() {
         trackDuration = 200,
         isLaunchedFromPowerAmp = true,
         preferredLyricsType = LyricsType.SYNCED,
-        onLyricChosen = { },
+        fixSongMetaData = true,
+        onLyricChosen = { _, _-> },
         onEditLyrics = {},
         onFixMetadata = {})
 }

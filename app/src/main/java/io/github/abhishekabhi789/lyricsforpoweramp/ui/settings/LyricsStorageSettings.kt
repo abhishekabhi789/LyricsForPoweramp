@@ -64,6 +64,8 @@ private fun LyricsStorageSettingsContent(
     onSaveIdTagsInFileChange: (Boolean) -> Unit,
     embedIntoFile: Boolean,
     onEmbedIntoFileChange: (Boolean) -> Unit,
+    fixSongMetadata: Boolean,
+    onFixSongMetadataChange: (Boolean) -> Unit,
     powerampFolders: List<PowerampFolder>,
     savedUris: List<Uri>,
     accessRequestedPath: Uri?,
@@ -132,6 +134,22 @@ private fun LyricsStorageSettingsContent(
                 checked = embedIntoFile, onCheckedChange = onEmbedIntoFileChange,
                 interactionSource = interactionSource,
                 modifier = Modifier.semantics { contentDescription = accessibilityLabel })
+        }
+
+        BasicSettings(
+            label = stringResource(R.string.settings_fix_song_metadata_label),
+            description = stringResource(R.string.settings_fix_song_metadata_description),
+            onClick = { onFixSongMetadataChange(!fixSongMetadata) }
+        ) { interactionSource ->
+            val accessibilityLabel =
+                stringResource(if (fixSongMetadata) R.string.disable else R.string.enable).let {
+                    "$it ${stringResource(R.string.settings_fix_song_metadata_label)}"
+                }
+            Switch(
+                checked = fixSongMetadata, onCheckedChange = onFixSongMetadataChange,
+                interactionSource = interactionSource,
+                modifier = Modifier.semantics { contentDescription = accessibilityLabel }
+            )
         }
 
         LaunchedEffect(Unit) {
@@ -291,6 +309,7 @@ fun LyricsStorageSettings(
     val saveAsFile by viewmodel.saveAsFile.collectAsStateWithLifecycle()
     val saveIdTagsInFile by viewmodel.saveIdTagsInFile.collectAsStateWithLifecycle()
     val embedIntoFile by viewmodel.embedLyricsIntoFile.collectAsStateWithLifecycle()
+    val fixSongMetadata by viewmodel.fixSongMetadata.collectAsStateWithLifecycle()
     val accessRequestedPath by viewmodel.accessRequestedPath.collectAsStateWithLifecycle()
     val savedUris by viewmodel.savedUris.collectAsStateWithLifecycle()
     val powerampFolders by viewmodel.powerampFolders.collectAsStateWithLifecycle()
@@ -305,6 +324,8 @@ fun LyricsStorageSettings(
         saveIdTagsInFile = saveIdTagsInFile,
         onSaveIdTagsInFileChange = viewmodel::setSaveIdTagsInFile,
         embedIntoFile = embedIntoFile,
+        fixSongMetadata = fixSongMetadata,
+        onFixSongMetadataChange = viewmodel::setFixSongMetadata,
         onEmbedIntoFileChange = viewmodel::setEmbedLyricsIntoFile,
         powerampFolders = powerampFolders,
         savedUris = savedUris,
@@ -322,6 +343,7 @@ private fun LyricsStorageSettingsPreview() {
     var saveAsFile by remember { mutableStateOf(false) }
     var saveIdTagsInFile by remember { mutableStateOf(false) }
     var embedIntoFile by remember { mutableStateOf(false) }
+    var fixSongMetadata by remember { mutableStateOf(false) }
     LyricsForPowerAmpTheme {
         LyricsStorageSettingsContent(
             topbar = { TopAppBar(title = { Text("Lyrics Storage Settings") }) },
@@ -333,6 +355,8 @@ private fun LyricsStorageSettingsPreview() {
             onSaveIdTagsInFileChange = { saveIdTagsInFile = it },
             embedIntoFile = embedIntoFile,
             onEmbedIntoFileChange = { embedIntoFile = it },
+            fixSongMetadata = fixSongMetadata,
+            onFixSongMetadataChange = { fixSongMetadata = it },
             powerampFolders = listOf(
                 PowerampFolder(1, "Music", "primary:Music"),
                 PowerampFolder(2, "Downloads", "primary:Download")
