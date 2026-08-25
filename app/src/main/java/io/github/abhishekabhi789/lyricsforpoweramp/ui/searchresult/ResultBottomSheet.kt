@@ -46,11 +46,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import io.github.abhishekabhi789.lyricsforpoweramp.R
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.LyricsSavingState
+import io.github.abhishekabhi789.lyricsforpoweramp.helpers.PowerampApiHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.StorageHelper
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
@@ -65,6 +67,7 @@ fun ResultBottomSheet(
     onDismiss: () -> Unit,
     onFinish: (() -> Unit)? = null,
 ) {
+    val context = LocalContext.current
     val timeout = 3.seconds
     val sendToPoweramp by remember(lyricsSavingState) { derivedStateOf { lyricsSavingState.sendToPoweramp } }
     val saveToStorage by remember(lyricsSavingState) { derivedStateOf { lyricsSavingState.saveAsFile } }
@@ -135,7 +138,7 @@ fun ResultBottomSheet(
                     )
                 }
 
-                if (fixSongMetadata.shouldPerform){
+                if (fixSongMetadata.shouldPerform) {
                     val label = when (fixSongMetadata.result) {
                         StorageHelper.Result.SUCCESS -> R.string.lyrics_metadata_fixed
                         else -> fixSongMetadata.result?.messageResId
@@ -170,6 +173,11 @@ fun ResultBottomSheet(
                                 else -> null
                             }
                         }
+                    }
+                }
+                LaunchedEffect(completed) {
+                    if (completed == true) {
+                        PowerampApiHelper.refreshPowerampLibrary(context)
                     }
                 }
                 StepIndicator(stringResource(R.string.done), completed)

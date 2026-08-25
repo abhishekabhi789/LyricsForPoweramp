@@ -180,5 +180,14 @@ class PowerampApiHelper @Inject constructor(
     ♫♫♫♫♫'
     `♫♫♫'
 """
+
+        fun refreshPowerampLibrary(context: Context) {
+            val intent = Intent(PowerampAPI.Scanner.ACTION_SCAN_TAGS)
+            try {
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                Log.e(TAG, "refreshPowerampLibrary: failed to refresh library", e)
+            }
+        }
     }
 }

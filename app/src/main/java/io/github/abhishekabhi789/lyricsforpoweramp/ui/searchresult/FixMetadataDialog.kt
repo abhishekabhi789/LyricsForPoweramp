@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.kyant.taglib.PropertyMap
 import io.github.abhishekabhi789.lyricsforpoweramp.R
+import io.github.abhishekabhi789.lyricsforpoweramp.helpers.PowerampApiHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.helpers.TaglibHelper
 import io.github.abhishekabhi789.lyricsforpoweramp.model.Lyrics
 import io.github.abhishekabhi789.lyricsforpoweramp.ui.theme.LyricsForPowerAmpTheme
@@ -152,6 +153,7 @@ fun FixMetadataDialog(
                     if (taglibSession.setMetadata(newMetadata)) {
                         taglibSession.saveModifiedFile()
                         context.makeToast(R.string.saved)
+                        PowerampApiHelper.refreshPowerampLibrary(context)
                         onDismiss()
                     } else context.makeToast(R.string.failed)
                 }
